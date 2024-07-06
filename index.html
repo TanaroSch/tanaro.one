@@ -1,351 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Website</title>
     <style>
-      :root {
-        --bg-color: #111111;
-        --text-color: #e0e0e0;
-        --accent-color: #00a86b;
-        --secondary-color: #333333;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Arial", sans-serif;
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        line-height: 1.6;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
-
-      /* Updated header styles */
-      header {
-        background: var(--bg-color);
-        color: var(--text-color);
-        padding: 20px 0;
-        border-bottom: var(--accent-color) 3px solid;
-        width: 100%;
-      }
-
-      .header-container {
-        width: 80%;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      header a {
-        color: var(--text-color);
-        text-decoration: none;
-        text-transform: uppercase;
-        font-size: 16px;
-      }
-
-      .main-menu {
-        list-style: none;
-        display: flex;
-      }
-
-      .main-menu li {
-        padding: 0 20px;
-        position: relative;
-      }
-
-      .has-dropdown {
-        position: relative;
-      }
-
-      .dropdown {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        background-color: var(--bg-color);
-        min-width: 200px;
-        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-        z-index: 1001;
-        list-style: none;
-        border-radius: 0 0 4px 4px;
-      }
-
-      .has-dropdown:hover .dropdown {
-        display: block;
-      }
-
-      .dropdown li {
-        padding: 0;
-      }
-
-      .dropdown a {
-        padding: 12px 20px;
-        display: block;
-      }
-
-      .dropdown a:hover {
-        background-color: var(--accent-color);
-      }
-
-      /* Main content styles */
-      .main-content {
-        flex-grow: 1;
-        position: relative;
-        width: 80%;
-        margin: 20px auto;
-        z-index: 1;
-      }
-
-      .container {
-        max-width: 800px;
-        text-align: left;
-        position: relative;
-        z-index: 1;
-      }
-      h1 {
-        font-size: 3rem;
-        margin-bottom: 20px;
-        color: var(--accent-color);
-        font-weight: 300;
-      }
-      p {
-        margin-bottom: 20px;
-        font-size: 1.1rem;
-        opacity: 0.9;
-      }
-      .links {
-        display: flex;
-        gap: 20px;
-        margin-top: 30px;
-        flex-wrap: wrap;
-      }
-      .btn {
-        padding: 10px 20px;
-        background-color: var(--secondary-color);
-        color: var(--text-color);
-        text-decoration: none;
-        border-radius: 25px;
-        transition: all 0.3s ease;
-        font-weight: bold;
-        cursor: pointer;
-        border: none;
-        font-size: 1rem;
-      }
-      .btn:hover {
-        background-color: var(--accent-color);
-        transform: translateY(-2px);
-      }
-      .ai-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 0;
-        opacity: 0.1;
-      }
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-          opacity: 0.5;
+        :root {
+            --bg-color: #111111;
+            --text-color: #e0e0e0;
+            --accent-color: #00a86b;
+            --secondary-color: #333333;
+            
         }
-        50% {
-          transform: scale(1.1);
-          opacity: 0.7;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        100% {
-          transform: scale(1);
-          opacity: 0.5;
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
         }
-      }
-      .node {
-        position: absolute;
-        width: 4px;
-        height: 4px;
-        background-color: var(--accent-color);
-        border-radius: 50%;
-        animation: pulse 4s infinite;
-      }
-      .connection {
-        position: absolute;
-        height: 1px;
-        background-color: var(--accent-color);
-        opacity: 0.5;
-        transform-origin: left center;
-      }
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 2;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.8);
-      }
-      .modal-content {
-        background-color: var(--bg-color);
-        margin: 2% auto;
-        padding: 20px;
-        border: 1px solid var(--accent-color);
-        width: 95%;
-        max-width: 860px;
-        position: relative;
-      }
-      .close {
-        color: var(--accent-color);
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .close:hover {
-        color: var(--text-color);
-      }
-      #gameFrame {
-        width: 100%;
-        height: 460px;
-        border: none;
-        overflow: hidden;
-      }
-      .dropdown {
-        position: relative;
-        display: inline-block;
-      }
-      .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: var(--secondary-color);
-        min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-        border-radius: 0 0 25px 25px;
-        overflow: hidden;
-      }
-      .dropdown-content a {
-        color: var(--text-color);
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-        transition: all 0.3s ease;
-      }
-      .dropdown-content a:hover {
-        background-color: var(--accent-color);
-      }
-      .dropdown-content a:last-child {
-        border-radius: 0 0 25px 25px;
-      }
-      .dropdown:hover .dropdown-content {
-        display: block;
-      }
-      .dropdown .btn::after {
-        content: " ▼";
-        font-size: 0.7em;
-        vertical-align: middle;
-      }
-      #easterEgg {
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        width: 20px;
-        height: 20px;
-        background-color: var(--accent-color);
-        border-radius: 50%;
-        cursor: pointer;
-        opacity: 0.3;
-        transition: opacity 0.3s ease;
-      }
-
-      #easterEgg:hover {
-        opacity: 1;
-      }
-
-      .konami-code {
-        position: fixed;
-        bottom: 10px;
-        left: 10px;
-        font-size: 12px;
-        opacity: 0.05;
-      }
-      #bee {
-        position: fixed;
-        width: 40px;
-        height: 30px;
-        display: none;
-        cursor: pointer;
-        z-index: 1000;
-      }
-
-      @keyframes fly {
-        to {
-          transform: translate(var(--flyX), var(--flyY)) rotate(var(--rotate));
+        .container {
+            max-width: 800px;
+            text-align: left;
+            position: relative;
+            z-index: 1;
         }
-      }
-      @media (max-width: 768px) {
-        .header-container {
-          flex-direction: column;
-          text-align: center;
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            font-weight: 300;
         }
-
-        .main-menu {
-          flex-direction: column;
-          margin-top: 20px;
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
-
-        .main-menu li {
-          padding: 10px 0;
+        .links {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
         }
-
+        .btn {
+            padding: 10px 20px;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+        .btn:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+        .ai-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.1;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
+        .node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            animation: pulse 4s infinite;
+        }
+        .connection {
+            position: absolute;
+            height: 1px;
+            background-color: var(--accent-color);
+            opacity: 0.5;
+            transform-origin: left center;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+        }
+        .modal-content {
+            background-color: var(--bg-color);
+            margin: 2% auto;
+            padding: 20px;
+            border: 1px solid var(--accent-color);
+            width: 95%;
+            max-width: 860px;
+            position: relative;
+        }
+        .close {
+            color: var(--accent-color);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: var(--text-color);
+        }
+        #gameFrame {
+            width: 100%;
+            height: 460px;
+            border: none;
+            overflow: hidden;
+        }
         .dropdown {
-          position: static;
-          display: none;
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--secondary-color);
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 0 0 25px 25px;
+            overflow: hidden;
+        }
+        .dropdown-content a {
+            color: var(--text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+        }
+        .dropdown-content a:hover {
+            background-color: var(--accent-color);
+        }
+        .dropdown-content a:last-child {
+            border-radius: 0 0 25px 25px;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown .btn::after {
+            content: " ▼";
+            font-size: 0.7em;
+            vertical-align: middle;
+        }
+        #easterEgg {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
         }
 
-        .has-dropdown:hover .dropdown {
-          display: block;
+        #easterEgg:hover {
+            opacity: 1;
         }
-      }
+
+        .konami-code {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 12px;
+            opacity: 0.05;
+        }
+        #bee {
+            position: fixed;
+            width: 40px;
+            height: 30px;
+            display: none;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        @keyframes fly {
+            to { transform: translate(var(--flyX), var(--flyY)) rotate(var(--rotate)); }
+        }
     </style>
-  </head>
-  <body>
-    <header>
-        <div class="header-container">
-            <div id="branding">
-                <h1>Your Name</h1>
-            </div>
-            <nav>
-                <ul class="main-menu">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li class="has-dropdown">
-                        <a href="#projects">Projects</a>
-                        <ul class="dropdown">
-                            <li><a href="#llm">LLM Research</a></li>
-                            <li><a href="#nlp">NLP Applications</a></li>
-                            <li><a href="#ml">Machine Learning</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <div class="main-content">
-        <div id="bee" title="Curious? Click me!"></div>
-        <div class="konami-code">↑↑↓↓←→←→BA</div>
-        <div class="ai-bg" id="aiBg"></div>
+    </style>
+</head>
+<body>
+    <div class="ai-bg" id="aiBg"></div>
+    <div class="container">
         <h1 id="name"></h1>
         <div id="description"></div>
         <div class="links" id="links"></div>
@@ -358,167 +222,241 @@
         </div>
     </div>
 
+    <div id="easterEgg" title="Curious? Click me!"></div>
+    <div class="konami-code">↑↑↓↓←→←→BA</div>
+
+    <div id="bee"></div>
+
     <script src="config.js"></script>
     <script>
-      function createNode(x, y) {
-        const node = document.createElement("div");
-        node.className = "node";
-        node.style.left = `${x}px`;
-        node.style.top = `${y}px`;
-        return node;
-      }
-
-      function createConnection(x1, y1, x2, y2) {
-        const connection = document.createElement("div");
-        connection.className = "connection";
-        const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-        const angle = (Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI;
-        connection.style.width = `${length}px`;
-        connection.style.left = `${x1}px`;
-        connection.style.top = `${y1}px`;
-        connection.style.transform = `rotate(${angle}deg)`;
-        return connection;
-      }
-
-      function generateAIBackground() {
-        const aiBg = document.getElementById("aiBg");
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        const nodeCount = 20;
-        const nodes = [];
-
-        for (let i = 0; i < nodeCount; i++) {
-          const x = Math.random() * width;
-          const y = Math.random() * height;
-          const node = createNode(x, y);
-          nodes.push({ x, y, element: node });
-          aiBg.appendChild(node);
+        function createNode(x, y) {
+            const node = document.createElement('div');
+            node.className = 'node';
+            node.style.left = `${x}px`;
+            node.style.top = `${y}px`;
+            return node;
         }
 
-        for (let i = 0; i < nodes.length; i++) {
-          for (let j = i + 1; j < nodes.length; j++) {
-            if (Math.random() > 0.5) continue;
-            const connection = createConnection(
-              nodes[i].x,
-              nodes[i].y,
-              nodes[j].x,
-              nodes[j].y
-            );
-            aiBg.appendChild(connection);
-          }
+        function createConnection(x1, y1, x2, y2) {
+            const connection = document.createElement('div');
+            connection.className = 'connection';
+            const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+            connection.style.width = `${length}px`;
+            connection.style.left = `${x1}px`;
+            connection.style.top = `${y1}px`;
+            connection.style.transform = `rotate(${angle}deg)`;
+            return connection;
         }
-      }
 
-      function populateContent() {
-        document.title = `${config.name} - ${config.title}`;
-        document.getElementById("name").textContent = config.name;
+        function generateAIBackground() {
+            const aiBg = document.getElementById('aiBg');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const nodeCount = 20;
+            const nodes = [];
 
-        const descriptionElement = document.getElementById("description");
-        config.description.forEach((para) => {
-          const p = document.createElement("p");
-          p.textContent = para;
-          descriptionElement.appendChild(p);
-        });
+            for (let i = 0; i < nodeCount; i++) {
+                const x = Math.random() * width;
+                const y = Math.random() * height;
+                const node = createNode(x, y);
+                nodes.push({x, y, element: node});
+                aiBg.appendChild(node);
+            }
 
-        const linksElement = document.getElementById("links");
-        config.links.forEach((link) => {
-          const a = document.createElement("a");
-          a.href = link.url;
-          a.textContent = link.name;
-          a.className = "btn";
-          a.target = "_blank";
-          linksElement.appendChild(a);
-        });
-      }
-
-      function playGame(gameFile) {
-        const timestamp = new Date().getTime();
-        document.getElementById("gameFrame").src = `${gameFile}?v=${timestamp}`;
-        document.getElementById("gameModal").style.display = "block";
-      }
-
-      function showBee() {
-        const bee = document.getElementById("bee");
-        bee.style.display = "block";
-        bee.style.left = `${Math.random() * (window.innerWidth - 30)}px`;
-        bee.style.top = `${Math.random() * (window.innerHeight - 30)}px`;
-
-        bee.animate(
-          [
-            { transform: "translate(0, 0) rotate(0deg)" },
-            { transform: "translate(50px, -50px) rotate(90deg)" },
-            { transform: "translate(0, -100px) rotate(180deg)" },
-            { transform: "translate(-50px, -50px) rotate(270deg)" },
-            { transform: "translate(0, 0) rotate(360deg)" },
-          ],
-          {
-            duration: 2000,
-            iterations: 3,
-          }
-        ).onfinish = () => {
-          bee.style.display = "none";
-        };
-      }
-
-      function startBeeGame() {
-        playGame(config.games[1].file);
-      }
-
-      setTimeout(showBee, Math.random() * (300000 - 30000) + 30000);
-
-      document.getElementById("bee").addEventListener("click", startBeeGame);
-
-      let beeTyped = "";
-      document.addEventListener("keydown", function (e) {
-        beeTyped += e.key.toLowerCase();
-        beeTyped = beeTyped.slice(-3);
-        if (beeTyped === "bee") {
-          startBeeGame();
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    if (Math.random() > 0.5) continue;
+                    const connection = createConnection(nodes[i].x, nodes[i].y, nodes[j].x, nodes[j].y);
+                    aiBg.appendChild(connection);
+                }
+            }
         }
-      });
 
-      let konamiCode = [
-        "ArrowUp",
-        "ArrowUp",
-        "ArrowDown",
-        "ArrowDown",
-        "ArrowLeft",
-        "ArrowRight",
-        "ArrowLeft",
-        "ArrowRight",
-        "b",
-        "a",
-      ];
-      let konamiCodePosition = 0;
+        function populateContent() {
+            document.title = `${config.name} - ${config.title}`;
+            document.getElementById('name').textContent = config.name;
+            
+            const descriptionElement = document.getElementById('description');
+            config.description.forEach(para => {
+                const p = document.createElement('p');
+                p.textContent = para;
+                descriptionElement.appendChild(p);
+            });
 
-      document.addEventListener("keydown", function (e) {
-        if (e.key === konamiCode[konamiCodePosition]) {
-          konamiCodePosition++;
+            const linksElement = document.getElementById('links');
+            config.links.forEach(link => {
+                const a = document.createElement('a');
+                a.href = link.url;
+                a.textContent = link.name;
+                a.className = 'btn';
+                a.target = '_blank';
+                linksElement.appendChild(a);
+            });
 
-          if (konamiCodePosition === konamiCode.length) {
+        }
+
+        function playGame(gameFile) {
+            const timestamp = new Date().getTime();
+            document.getElementById('gameFrame').src = `${gameFile}?v=${timestamp}`;
+            document.getElementById('gameModal').style.display = 'block';
+        }
+
+        document.getElementById('easterEgg').addEventListener('click', function() {
             playGame(config.games[0].file);
-            konamiCodePosition = 0;
-          }
-        } else {
-          konamiCodePosition = 0;
+        });
+
+        let konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiCodePosition = 0;
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === konamiCode[konamiCodePosition]) {
+                konamiCodePosition++;
+
+                if (konamiCodePosition === konamiCode.length) {
+                    playGame(config.games[0].file);
+                    konamiCodePosition = 0;
+                }
+            } else {
+                konamiCodePosition = 0;
+            }
+        });
+
+        function drawBee(context, x, y, width, height) {
+            context.save();
+            context.translate(x + width / 2, y + height / 2);
+            
+            // Body
+            context.fillStyle = 'gold';
+            context.beginPath();
+            context.ellipse(0, 0, width / 2, height / 2, 0, 0, Math.PI * 2);
+            context.fill();
+
+            // Stripes
+            context.fillStyle = 'black';
+            context.fillRect(-5, -15, 30, 7);
+            context.fillRect(-5, 0, 30, 7);
+
+            // Wings
+            context.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            context.beginPath();
+            context.ellipse(0, -height / 2, 15, 10, Math.PI / 4, 0, Math.PI * 2);
+            context.fill();
+
+            // Eyes
+            context.fillStyle = 'white';
+            context.beginPath();
+            context.arc(15, -5, 5, 0, Math.PI * 2);
+            context.fill();
+            context.fillStyle = 'black';
+            context.beginPath();
+            context.arc(17, -5, 2, 0, Math.PI * 2);
+            context.fill();
+
+            // Stinger
+            context.beginPath();
+            context.moveTo(-width / 2, 0);
+            context.lineTo(-width / 2 - 5, 5);
+            context.lineTo(-width / 2, 10);
+            context.closePath();
+            context.fill();
+
+            context.restore();
         }
-      });
 
-      generateAIBackground();
-      populateContent();
-
-      const modal = document.getElementById("gameModal");
-      const span = document.getElementsByClassName("close")[0];
-
-      span.onclick = function () {
-        modal.style.display = "none";
-      };
-
-      window.onclick = function (event) {
-        if (event.target == modal) {
-          modal.style.display = "none";
+        function createBeeElement() {
+            const beeCanvas = document.createElement('canvas');
+            beeCanvas.width = 40;
+            beeCanvas.height = 30;
+            const beeCtx = beeCanvas.getContext('2d');
+            drawBee(beeCtx, 0, 0, 40, 30);
+            
+            const bee = document.getElementById('bee');
+            bee.style.background = `url(${beeCanvas.toDataURL()})`;
+            bee.style.backgroundSize = 'contain';
+            bee.style.backgroundRepeat = 'no-repeat';
+            return bee;
         }
-      };
+
+        function getRandomPosition(edge) {
+            const positions = {
+                left: () => ({ x: -50, y: Math.random() * window.innerHeight }),
+                right: () => ({ x: window.innerWidth + 50, y: Math.random() * window.innerHeight }),
+                top: () => ({ x: Math.random() * window.innerWidth, y: -50 }),
+                bottom: () => ({ x: Math.random() * window.innerWidth, y: window.innerHeight + 50 })
+            };
+            return positions[edge]();
+        }
+
+        function showBee() {
+            const bee = createBeeElement();
+            const edges = ['left', 'right', 'top', 'bottom'];
+            const startEdge = edges[Math.floor(Math.random() * edges.length)];
+            const endEdge = edges.filter(e => e !== startEdge && 
+                ((e === 'left' && startEdge === 'right') || 
+                 (e === 'right' && startEdge === 'left') || 
+                 (e === 'top' && startEdge === 'bottom') || 
+                 (e === 'bottom' && startEdge === 'top')))[0];
+
+            const start = getRandomPosition(startEdge);
+            const end = getRandomPosition(endEdge);
+
+            bee.style.left = `${start.x}px`;
+            bee.style.top = `${start.y}px`;
+            bee.style.display = 'block';
+
+            const flyX = end.x - start.x;
+            const flyY = end.y - start.y;
+            const rotate = Math.atan2(flyY, flyX) * 180 / Math.PI;
+
+            bee.style.setProperty('--flyX', `${flyX}px`);
+            bee.style.setProperty('--flyY', `${flyY}px`);
+            bee.style.setProperty('--rotate', `${rotate}deg`);
+
+            bee.animate([
+                { transform: 'translate(0, 0) rotate(0deg)' },
+                { transform: 'translate(var(--flyX), var(--flyY)) rotate(var(--rotate))' }
+            ], {
+                duration: 5000,
+                easing: 'ease-in-out',
+                fill: 'forwards'
+            }).onfinish = () => {
+                bee.style.display = 'none';
+            };
+        }
+
+        function startBeeGame() {
+            playGame(config.games[1].file);
+        }
+
+        setTimeout(showBee, Math.random() * (300000 - 30000) + 3000);
+
+        document.getElementById('bee').addEventListener('click', startBeeGame);
+
+        let beeTyped = '';
+        document.addEventListener('keydown', function(e) {
+            beeTyped += e.key.toLowerCase();
+            beeTyped = beeTyped.slice(-3);
+            if (beeTyped === 'bee') {
+                startBeeGame();
+            }
+        });
+
+        generateAIBackground();
+        populateContent();
+
+        const modal = document.getElementById("gameModal");
+        const span = document.getElementsByClassName("close")[0];
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
     </script>
-  </body>
+</body>
 </html>
