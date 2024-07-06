@@ -168,6 +168,43 @@
             font-size: 0.7em;
             vertical-align: middle;
         }
+        #easterEgg {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
+
+        #easterEgg:hover {
+            opacity: 1;
+        }
+
+        .konami-code {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 12px;
+            opacity: 0.05;
+        }
+        #bee {
+            position: fixed;
+            width: 40px;
+            height: 30px;
+            display: none;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        @keyframes fly {
+            to { transform: translate(var(--flyX), var(--flyY)) rotate(var(--rotate)); }
+        }
+    </style>
     </style>
 </head>
 <body>
@@ -184,6 +221,11 @@
             <iframe id="gameFrame"></iframe>
         </div>
     </div>
+
+    <div id="easterEgg" title="Curious? Click me!"></div>
+    <div class="konami-code">↑↑↓↓←→←→BA</div>
+
+    <div id="bee"></div>
 
     <script src="config.js"></script>
     <script>
@@ -252,41 +294,157 @@
                 linksElement.appendChild(a);
             });
 
-            const dropdownDiv = document.createElement('div');
-            dropdownDiv.className = 'dropdown';
-            const dropdownBtn = document.createElement('button');
-            dropdownBtn.textContent = `Play ${config.games[0].name}`;
-            dropdownBtn.className = 'btn';
-            dropdownBtn.onclick = () => playGame(config.games[0].file);
-            dropdownDiv.appendChild(dropdownBtn);
-
-            const dropdownContent = document.createElement('div');
-            dropdownContent.className = 'dropdown-content';
-            config.games.slice(1).forEach(game => {
-                const a = document.createElement('a');
-                a.href = '#';
-                a.textContent = game.name;
-                a.onclick = (e) => {
-                    e.preventDefault();
-                    playGame(game.file);
-                };
-                dropdownContent.appendChild(a);
-            });
-            dropdownDiv.appendChild(dropdownContent);
-
-            linksElement.appendChild(dropdownDiv);
         }
 
         function playGame(gameFile) {
-            const timestamp = new Date().getTime(); // Get current timestamp
+            const timestamp = new Date().getTime();
             document.getElementById('gameFrame').src = `${gameFile}?v=${timestamp}`;
             document.getElementById('gameModal').style.display = 'block';
         }
 
+        document.getElementById('easterEgg').addEventListener('click', function() {
+            playGame(config.games[0].file);
+        });
+
+        let konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiCodePosition = 0;
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === konamiCode[konamiCodePosition]) {
+                konamiCodePosition++;
+
+                if (konamiCodePosition === konamiCode.length) {
+                    playGame(config.games[0].file);
+                    konamiCodePosition = 0;
+                }
+            } else {
+                konamiCodePosition = 0;
+            }
+        });
+
+        function drawBee(context, x, y, width, height) {
+            context.save();
+            context.translate(x + width / 2, y + height / 2);
+            
+            // Body
+            context.fillStyle = 'gold';
+            context.beginPath();
+            context.ellipse(0, 0, width / 2, height / 2, 0, 0, Math.PI * 2);
+            context.fill();
+
+            // Stripes
+            context.fillStyle = 'black';
+            context.fillRect(-5, -15, 30, 7);
+            context.fillRect(-5, 0, 30, 7);
+
+            // Wings
+            context.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            context.beginPath();
+            context.ellipse(0, -height / 2, 15, 10, Math.PI / 4, 0, Math.PI * 2);
+            context.fill();
+
+            // Eyes
+            context.fillStyle = 'white';
+            context.beginPath();
+            context.arc(15, -5, 5, 0, Math.PI * 2);
+            context.fill();
+            context.fillStyle = 'black';
+            context.beginPath();
+            context.arc(17, -5, 2, 0, Math.PI * 2);
+            context.fill();
+
+            // Stinger
+            context.beginPath();
+            context.moveTo(-width / 2, 0);
+            context.lineTo(-width / 2 - 5, 5);
+            context.lineTo(-width / 2, 10);
+            context.closePath();
+            context.fill();
+
+            context.restore();
+        }
+
+        function createBeeElement() {
+            const beeCanvas = document.createElement('canvas');
+            beeCanvas.width = 40;
+            beeCanvas.height = 30;
+            const beeCtx = beeCanvas.getContext('2d');
+            drawBee(beeCtx, 0, 0, 40, 30);
+            
+            const bee = document.getElementById('bee');
+            bee.style.background = `url(${beeCanvas.toDataURL()})`;
+            bee.style.backgroundSize = 'contain';
+            bee.style.backgroundRepeat = 'no-repeat';
+            return bee;
+        }
+
+        function getRandomPosition(edge) {
+            const positions = {
+                left: () => ({ x: -50, y: Math.random() * window.innerHeight }),
+                right: () => ({ x: window.innerWidth + 50, y: Math.random() * window.innerHeight }),
+                top: () => ({ x: Math.random() * window.innerWidth, y: -50 }),
+                bottom: () => ({ x: Math.random() * window.innerWidth, y: window.innerHeight + 50 })
+            };
+            return positions[edge]();
+        }
+
+        function showBee() {
+            const bee = createBeeElement();
+            const edges = ['left', 'right', 'top', 'bottom'];
+            const startEdge = edges[Math.floor(Math.random() * edges.length)];
+            const endEdge = edges.filter(e => e !== startEdge && 
+                ((e === 'left' && startEdge === 'right') || 
+                 (e === 'right' && startEdge === 'left') || 
+                 (e === 'top' && startEdge === 'bottom') || 
+                 (e === 'bottom' && startEdge === 'top')))[0];
+
+            const start = getRandomPosition(startEdge);
+            const end = getRandomPosition(endEdge);
+
+            bee.style.left = `${start.x}px`;
+            bee.style.top = `${start.y}px`;
+            bee.style.display = 'block';
+
+            const flyX = end.x - start.x;
+            const flyY = end.y - start.y;
+            const rotate = Math.atan2(flyY, flyX) * 180 / Math.PI;
+
+            bee.style.setProperty('--flyX', `${flyX}px`);
+            bee.style.setProperty('--flyY', `${flyY}px`);
+            bee.style.setProperty('--rotate', `${rotate}deg`);
+
+            bee.animate([
+                { transform: 'translate(0, 0) rotate(0deg)' },
+                { transform: 'translate(var(--flyX), var(--flyY)) rotate(var(--rotate))' }
+            ], {
+                duration: 5000,
+                easing: 'ease-in-out',
+                fill: 'forwards'
+            }).onfinish = () => {
+                bee.style.display = 'none';
+            };
+        }
+
+        function startBeeGame() {
+            playGame(config.games[1].file);
+        }
+
+        setTimeout(showBee, Math.random() * (300000 - 30000) + 3000);
+
+        document.getElementById('bee').addEventListener('click', startBeeGame);
+
+        let beeTyped = '';
+        document.addEventListener('keydown', function(e) {
+            beeTyped += e.key.toLowerCase();
+            beeTyped = beeTyped.slice(-3);
+            if (beeTyped === 'bee') {
+                startBeeGame();
+            }
+        });
+
         generateAIBackground();
         populateContent();
 
-        // Game modal functionality
         const modal = document.getElementById("gameModal");
         const span = document.getElementsByClassName("close")[0];
 

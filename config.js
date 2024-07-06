@@ -7,10 +7,11 @@ const config = {
     ],
     links: [
         { name: "GitHub", url: "https://github.com/TanaroSch" },
-        { name: "Instagram", url: "https://www.instagram.com/tanaro_s/" }
+        { name: "Instagram", url: "https://www.instagram.com/tanaro_s/" },
+        { name: "LinkedIn", url: "https://www.linkedin.com/in/tanaro/" }
     ],
     games: [
-        { name: "Tanne Hopper", file: "tanne-hopper.html" },
-        { name: "Bee Hopper", file: "bee-hopper.html" }
+        { name: "🌲", file: "tanne.html" },
+        { name: "🐝", file: "bee-hopper.html" }
     ]
 };
