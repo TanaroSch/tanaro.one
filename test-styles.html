@@ -51,22 +51,30 @@
     </button>
 
     <header>
-      <div class="container">
-        <div id="branding">
-          <h1>Your Company</h1>
+        <div class="container">
+            <div id="branding">
+                <h1>Your Company</h1>
+            </div>
+            <nav>
+                <ul class="main-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li class="has-dropdown">
+                        <a href="#services">Services</a>
+                        <ul class="dropdown">
+                            <li><a href="#web-design">Web Design</a></li>
+                            <li><a href="#app-development">App Development</a></li>
+                            <li><a href="#seo">SEO Optimization</a></li>
+                            <li><a href="#consulting">IT Consulting</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
         </div>
-        <nav>
-          <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </nav>
-      </div>
     </header>
 
-    <div class="container">
+    <main class="container">
       <h1>Welcome to Your Styled Page</h1>
 
       <div class="card">
@@ -274,7 +282,7 @@
           <p>This is the content of Tab 3.</p>
         </div>
       </div>
-    </div>
+    </main>
 
     <script>
       const modeToggle = document.getElementById("mode-toggle");

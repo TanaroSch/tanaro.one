@@ -39,12 +39,22 @@ body.dark-mode {
   padding: 0 20px;
 }
 
+/* Header and Navigation Styles */
 header {
   background: var(--primary-light);
   color: #ffffff;
   padding-top: 30px;
   min-height: 70px;
-  border-bottom: var(--accent-light) 3px solid;
+  border-bottom: var(--secondary-light) 3px solid;
+  position: relative;
+  z-index: 1000;
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+  overflow: visible; /* Changed from hidden to allow dropdown to be visible */
+  padding: 0 20px;
 }
 
 header a {
@@ -54,14 +64,10 @@ header a {
   font-size: 16px;
 }
 
-header ul {
-  padding: 0;
-  list-style: none;
-}
-
 header li {
-  display: inline;
+  display: inline-block;
   padding: 0 20px 0 20px;
+  position: relative;
 }
 
 header #branding {
@@ -75,6 +81,71 @@ header #branding h1 {
 header nav {
   float: right;
   margin-top: 10px;
+}
+
+/* Dropdown Menu Styles */
+.main-menu {
+  padding: 0;
+  list-style: none;
+  margin: 0;
+}
+
+.has-dropdown {
+  position: relative;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--primary-light);
+  min-width: 200px;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  padding: 0;
+  list-style: none;
+  border-radius: 0 0 4px 4px;
+}
+
+.has-dropdown:hover .dropdown {
+  display: block;
+}
+
+.dropdown li {
+  display: block;
+  padding: 0;
+}
+
+.dropdown a {
+  padding: 12px 20px;
+  display: block;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.dropdown a:hover {
+  background-color: var(--secondary-light);
+}
+
+/* Dark mode adjustments */
+.dark-mode header {
+  background: var(--primary-dark);
+  border-bottom-color: var(--secondary-dark);
+}
+
+.dark-mode .dropdown {
+  background-color: var(--primary-dark);
+}
+
+.dark-mode .dropdown a:hover {
+  background-color: var(--secondary-dark);
+}
+
+/* Main content styles */
+.container {
+  position: relative;
+  z-index: 1; /* Ensure main content is below the header and dropdown */
 }
 
 .button {
@@ -656,6 +727,8 @@ textarea {
   border-radius: 4px;
   font-size: 16px;
   transition: border-color 0.3s, box-shadow 0.3s;
+  color: var(--text-light); /* Updated to use the text color variable */
+  background-color: var(--background-light);
 }
 
 input[type="text"]:focus,
