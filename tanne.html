@@ -14,41 +14,50 @@
         background-color: #2c3e50;
         font-family: Arial, sans-serif;
       }
-      canvas {
+      #gameCanvas {
         border: 2px solid #34495e;
+        max-width: 100%;
+        max-height: 100vh;
       }
     </style>
   </head>
   <body>
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <canvas id="gameCanvas"></canvas>
     <script>
       const canvas = document.getElementById("gameCanvas");
       const ctx = canvas.getContext("2d");
 
+      let isVertical = window.innerHeight > window.innerWidth;
+      let canvasWidth = isVertical ? 400 : 800;
+      let canvasHeight = isVertical ? 600 : 500;
+
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+
       // Game variables
-      let pineconeX = 150;
+      let pineconeX = isVertical ? canvasWidth / 2 : 150;
       let pineconeY = 100;
       let pineconeVelocity = 0;
-      let gravity = 0.2;
+      let gravity = 0.3;
       let score = 0;
       let obstacles = [];
       let leaves = [];
-      let gameOver = false;
-      let gameStarted = false;
+      let gameState = "start"; // 'start', 'playing', 'gameOver', 'cooldown'
       let invincible = false;
       let invincibilityTimer = 0;
+      let cooldownTimer = 0;
 
       // Pinecone properties
       const pineconeWidth = 30;
       const pineconeHeight = 40;
 
       // Obstacle properties
-      const obstacleWidth = 80;
-      const gapHeight = 200;
+      const obstacleWidth = isVertical ? 100 : 80;
+      const gapHeight = isVertical ? 250 : 200;
       const obstacleSpeed = 1.5;
 
       // Background
-      const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      const skyGradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
       skyGradient.addColorStop(0, "#87CEEB");
       skyGradient.addColorStop(1, "#E0F6FF");
 
@@ -101,24 +110,22 @@
 
       function drawFirTree(x, height) {
         const treeWidth = obstacleWidth;
-        const trunkHeight = Math.min(30, height * 0.15); // Smaller trunk, max 30px or 15% of height
+        const trunkHeight = Math.min(30, height * 0.15);
         const trunkWidth = 10;
-        const levels = 7; // Increased number of levels for a taller appearance
+        const levels = 7;
         const levelHeight = (height - trunkHeight) / levels;
 
-        // Tree trunk
         ctx.fillStyle = "#8B4513";
         ctx.fillRect(
           x + (treeWidth - trunkWidth) / 2,
-          canvas.height - trunkHeight,
+          canvasHeight - trunkHeight,
           trunkWidth,
           trunkHeight
         );
 
-        // Draw tree from bottom up
         for (let i = 0; i < levels; i++) {
-          const currentHeight = canvas.height - trunkHeight - i * levelHeight;
-          const currentWidth = treeWidth * (1 - i / (levels * 1.5)); // Adjusted for a more triangular shape
+          const currentHeight = canvasHeight - trunkHeight - i * levelHeight;
+          const currentWidth = treeWidth * (1 - i / (levels * 1.5));
 
           ctx.beginPath();
           ctx.moveTo(x + treeWidth / 2, currentHeight - levelHeight);
@@ -152,7 +159,6 @@
         ctx.closePath();
         ctx.fill();
 
-        // Add some detail to the rock
         ctx.strokeStyle = "#808080";
         ctx.lineWidth = 2;
         for (let i = 0; i < 3; i++) {
@@ -179,7 +185,7 @@
       function updateLeaves() {
         if (leaves.length < 20) {
           leaves.push({
-            x: Math.random() * canvas.width,
+            x: Math.random() * canvasWidth,
             y: 0,
             speed: Math.random() * 2 + 1,
             rotation: Math.random() * Math.PI * 2,
@@ -190,7 +196,7 @@
           leaf.y += leaf.speed;
           leaf.x += Math.sin(leaf.y / 50) * 2;
           leaf.rotation += 0.05;
-          if (leaf.y > canvas.height) {
+          if (leaf.y > canvasHeight) {
             leaves.splice(index, 1);
           }
         });
@@ -206,14 +212,14 @@
       function updateObstacles() {
         if (
           obstacles.length === 0 ||
-          obstacles[obstacles.length - 1].x < canvas.width - 300
+          obstacles[obstacles.length - 1].x < canvasWidth - 300
         ) {
           let topHeight =
-            Math.random() * (canvas.height - gapHeight - 150) + 100;
+            Math.random() * (canvasHeight - gapHeight - 150) + 100;
           obstacles.push({
-            x: canvas.width,
+            x: canvasWidth,
             topHeight: topHeight,
-            bottomHeight: canvas.height - topHeight - gapHeight,
+            bottomHeight: canvasHeight - topHeight - gapHeight,
             passed: false,
           });
         }
@@ -221,7 +227,6 @@
         obstacles.forEach((obstacle) => {
           obstacle.x -= obstacleSpeed;
 
-          // Check if pinecone has passed the center of the obstacle
           if (!obstacle.passed && pineconeX > obstacle.x + obstacleWidth / 2) {
             obstacle.passed = true;
             score++;
@@ -248,15 +253,43 @@
             hitbox.x < obstacle.x + obstacleWidth &&
             hitbox.x + hitbox.width > obstacle.x &&
             (hitbox.y < obstacle.topHeight ||
-              hitbox.y + hitbox.height > canvas.height - obstacle.bottomHeight)
+              hitbox.y + hitbox.height > canvasHeight - obstacle.bottomHeight)
           ) {
             gameOver = true;
           }
         }
 
-        if (pineconeY + pineconeHeight > canvas.height || pineconeY < 0) {
+        if (pineconeY + pineconeHeight > canvasHeight || pineconeY < 0) {
           gameOver = true;
         }
+      }
+
+      function checkCollision() {
+        if (invincible) return false;
+
+        const hitbox = {
+          x: pineconeX - pineconeWidth / 2,
+          y: pineconeY,
+          width: pineconeWidth,
+          height: pineconeHeight,
+        };
+
+        for (let obstacle of obstacles) {
+          if (
+            hitbox.x < obstacle.x + obstacleWidth &&
+            hitbox.x + hitbox.width > obstacle.x &&
+            (hitbox.y < obstacle.topHeight ||
+              hitbox.y + hitbox.height > canvasHeight - obstacle.bottomHeight)
+          ) {
+            return true;
+          }
+        }
+
+        if (pineconeY + pineconeHeight > canvasHeight || pineconeY < 0) {
+          return true;
+        }
+
+        return false;
       }
 
       function drawScore() {
@@ -267,30 +300,30 @@
 
       function drawStartScreen() {
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
         ctx.fillStyle = "white";
         ctx.font = "bold 48px Arial";
         ctx.fillText(
           "Tanne Hopper",
-          canvas.width / 2 - 140,
-          canvas.height / 2 - 50
+          canvasWidth / 2 - 140,
+          canvasHeight / 2 - 50
         );
         ctx.font = "24px Arial";
         ctx.fillText(
-          "Press Space or Click to Start",
-          canvas.width / 2 - 140,
-          canvas.height / 2 + 20
+          "Press Space or Tap to Start",
+          canvasWidth / 2 - 140,
+          canvasHeight / 2 + 20
         );
         ctx.fillText(
-          "Keep pressing Space or clicking to hop!",
-          canvas.width / 2 - 180,
-          canvas.height / 2 + 60
+          "Press Space or Tap repeatedly to hop!",
+          canvasWidth / 2 - 180,
+          canvasHeight / 2 + 60
         );
       }
 
       function gameLoop() {
         ctx.fillStyle = skyGradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
         updateLeaves();
         leaves.forEach((leaf) => {
@@ -301,10 +334,10 @@
           ctx.restore();
         });
 
-        if (!gameStarted) {
+        if (gameState === "start") {
           drawStartScreen();
           drawPinecone(pineconeX, pineconeY);
-        } else if (!gameOver) {
+        } else if (gameState === "playing") {
           pineconeVelocity += gravity;
           pineconeY += pineconeVelocity;
 
@@ -316,68 +349,92 @@
           }
 
           updateObstacles();
-          checkCollision();
+          if (checkCollision()) {
+            gameState = "cooldown";
+            cooldownTimer = 60; // 60 frames at 60fps = 1 second
+          }
 
           drawObstacles();
           drawPinecone(pineconeX, pineconeY);
           drawScore();
-        } else {
+        } else if (gameState === "cooldown" || gameState === "gameOver") {
           drawObstacles();
           drawPinecone(pineconeX, pineconeY);
           ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillRect(0, 0, canvasWidth, canvasHeight);
           ctx.fillStyle = "white";
           ctx.font = "bold 48px Arial";
-          ctx.fillText("Game Over!", canvas.width / 2 - 100, canvas.height / 2);
+          ctx.fillText("Game Over!", canvasWidth / 2 - 100, canvasHeight / 2);
           ctx.font = "24px Arial";
           ctx.fillText(
             `Final Score: ${score}`,
-            canvas.width / 2 - 70,
-            canvas.height / 2 + 40
+            canvasWidth / 2 - 70,
+            canvasHeight / 2 + 40
           );
-          ctx.fillText(
-            "Press Space or Click to Restart",
-            canvas.width / 2 - 140,
-            canvas.height / 2 + 80
-          );
+
+          if (gameState === "cooldown") {
+            cooldownTimer--;
+            if (cooldownTimer <= 0) {
+              gameState = "gameOver";
+            }
+          } else {
+            ctx.fillText(
+              "Press Space or Tap to Restart",
+              canvasWidth / 2 - 140,
+              canvasHeight / 2 + 80
+            );
+          }
         }
 
         requestAnimationFrame(gameLoop);
       }
 
       function resetGame() {
+        pineconeX = isVertical ? canvasWidth / 2 : 150;
         pineconeY = 100;
         pineconeVelocity = 0;
         score = 0;
         obstacles = [];
-        gameOver = false;
         invincible = false;
         invincibilityTimer = 0;
+        gameState = "playing";
       }
 
       function hop() {
-        if (!gameStarted) {
-          gameStarted = true;
-        } else if (gameOver) {
+        pineconeVelocity = -7;
+        invincible = true;
+        invincibilityTimer = 20;
+      }
+
+      function handleInput() {
+        if (gameState === "start") {
+          gameState = "playing";
+        } else if (gameState === "playing") {
+          hop();
+        } else if (gameState === "gameOver") {
           resetGame();
-          gameStarted = true;
-        } else {
-          pineconeVelocity = -7;
-          invincible = true;
-          invincibilityTimer = 20;
         }
       }
 
       document.addEventListener("keydown", (event) => {
         if (event.code === "Space") {
           event.preventDefault();
-          hop();
+          handleInput();
         }
       });
 
       canvas.addEventListener("click", (event) => {
         event.preventDefault();
-        hop();
+        handleInput();
+      });
+
+      window.addEventListener("resize", () => {
+        isVertical = window.innerHeight > window.innerWidth;
+        canvasWidth = isVertical ? 400 : 800;
+        canvasHeight = isVertical ? 600 : 500;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        resetGame();
       });
 
       gameLoop();
