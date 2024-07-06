@@ -1,313 +1,386 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tanne Hopper Game</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #2C3E50;
-            font-family: Arial, sans-serif;
-        }
-        canvas {
-            border: 2px solid #34495E;
-        }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #2c3e50;
+        font-family: Arial, sans-serif;
+      }
+      canvas {
+        border: 2px solid #34495e;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
 
-        // Game variables
-        let pineconeX = 150;
-        let pineconeY = 200;
-        let pineconeVelocity = 0;
-        let gravity = 0.3;
-        let score = 0;
-        let obstacles = [];
-        let leaves = [];
-        let gameOver = false;
-        let gameStarted = false;
-        let invincible = false;
-        let invincibilityTimer = 0;
+      // Game variables
+      let pineconeX = 150;
+      let pineconeY = 100;
+      let pineconeVelocity = 0;
+      let gravity = 0.2;
+      let score = 0;
+      let obstacles = [];
+      let leaves = [];
+      let gameOver = false;
+      let gameStarted = false;
+      let invincible = false;
+      let invincibilityTimer = 0;
 
-        // Pinecone properties
-        const pineconeWidth = 30;
-        const pineconeHeight = 40;
+      // Pinecone properties
+      const pineconeWidth = 30;
+      const pineconeHeight = 40;
 
-        // Obstacle properties
-        const obstacleWidth = 80;
-        const gapHeight = 200;
-        const obstacleSpeed = 1.5;
+      // Obstacle properties
+      const obstacleWidth = 80;
+      const gapHeight = 200;
+      const obstacleSpeed = 1.5;
 
-        // Background
-        const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        skyGradient.addColorStop(0, "#87CEEB");
-        skyGradient.addColorStop(1, "#E0F6FF");
+      // Background
+      const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      skyGradient.addColorStop(0, "#87CEEB");
+      skyGradient.addColorStop(1, "#E0F6FF");
 
-        function drawPinecone(x, y) {
-            ctx.save();
-            ctx.translate(x, y);
-            
-            // Pinecone body
-            ctx.fillStyle = invincible ? 'rgba(101, 67, 33, 0.7)' : '#654321';
+      function drawPinecone(x, y) {
+        ctx.save();
+        ctx.translate(x, y);
+
+        // Pinecone body
+        ctx.fillStyle = invincible ? "rgba(101, 67, 33, 0.7)" : "#654321";
+        ctx.beginPath();
+        ctx.ellipse(
+          0,
+          pineconeHeight / 2,
+          pineconeWidth / 2,
+          pineconeHeight / 2,
+          0,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+
+        // Scales
+        const scaleRows = 6;
+        const scalesPerRow = 5;
+        for (let i = 0; i < scaleRows; i++) {
+          for (let j = 0; j < scalesPerRow; j++) {
+            const scaleX =
+              (j - scalesPerRow / 2 + 0.5) * (pineconeWidth / scalesPerRow);
+            const scaleY = i * (pineconeHeight / scaleRows) + 5;
+            const scaleWidth = pineconeWidth / scalesPerRow;
+            const scaleHeight = (pineconeHeight / scaleRows) * 0.8;
+
+            ctx.fillStyle = invincible ? "rgba(139, 69, 19, 0.7)" : "#8B4513";
             ctx.beginPath();
-            ctx.ellipse(0, pineconeHeight / 2, pineconeWidth / 2, pineconeHeight / 2, 0, 0, Math.PI * 2);
+            ctx.ellipse(
+              scaleX,
+              scaleY,
+              scaleWidth / 2,
+              scaleHeight / 2,
+              0,
+              0,
+              Math.PI
+            );
             ctx.fill();
-
-            // Scales
-            const scaleRows = 6;
-            const scalesPerRow = 5;
-            for (let i = 0; i < scaleRows; i++) {
-                for (let j = 0; j < scalesPerRow; j++) {
-                    const scaleX = (j - scalesPerRow / 2 + 0.5) * (pineconeWidth / scalesPerRow);
-                    const scaleY = i * (pineconeHeight / scaleRows) + 5;
-                    const scaleWidth = pineconeWidth / scalesPerRow;
-                    const scaleHeight = (pineconeHeight / scaleRows) * 0.8;
-
-                    ctx.fillStyle = invincible ? 'rgba(139, 69, 19, 0.7)' : '#8B4513';
-                    ctx.beginPath();
-                    ctx.ellipse(scaleX, scaleY, scaleWidth / 2, scaleHeight / 2, 0, 0, Math.PI);
-                    ctx.fill();
-                }
-            }
-
-            ctx.restore();
+          }
         }
 
-        function drawFirTree(x, height) {
-            const treeWidth = obstacleWidth;
-            const trunkHeight = Math.min(30, height * 0.15); // Smaller trunk, max 30px or 15% of height
-            const trunkWidth = 10;
-            const levels = 7; // Increased number of levels for a taller appearance
-            const levelHeight = (height - trunkHeight) / levels;
+        ctx.restore();
+      }
 
-            // Tree trunk
-            ctx.fillStyle = '#8B4513';
-            ctx.fillRect(x + (treeWidth - trunkWidth) / 2, canvas.height - trunkHeight, trunkWidth, trunkHeight);
+      function drawFirTree(x, height) {
+        const treeWidth = obstacleWidth;
+        const trunkHeight = Math.min(30, height * 0.15); // Smaller trunk, max 30px or 15% of height
+        const trunkWidth = 10;
+        const levels = 7; // Increased number of levels for a taller appearance
+        const levelHeight = (height - trunkHeight) / levels;
 
-            // Draw tree from bottom up
-            for (let i = 0; i < levels; i++) {
-                const currentHeight = canvas.height - trunkHeight - (i * levelHeight);
-                const currentWidth = treeWidth * (1 - i / (levels * 1.5)); // Adjusted for a more triangular shape
-                
-                ctx.beginPath();
-                ctx.moveTo(x + treeWidth / 2, currentHeight - levelHeight);
-                ctx.lineTo(x + (treeWidth - currentWidth) / 2, currentHeight);
-                ctx.lineTo(x + (treeWidth + currentWidth) / 2, currentHeight);
-                ctx.closePath();
-                ctx.fillStyle = i % 2 === 0 ? '#228B22' : '#006400';
-                ctx.fill();
-            }
+        // Tree trunk
+        ctx.fillStyle = "#8B4513";
+        ctx.fillRect(
+          x + (treeWidth - trunkWidth) / 2,
+          canvas.height - trunkHeight,
+          trunkWidth,
+          trunkHeight
+        );
+
+        // Draw tree from bottom up
+        for (let i = 0; i < levels; i++) {
+          const currentHeight = canvas.height - trunkHeight - i * levelHeight;
+          const currentWidth = treeWidth * (1 - i / (levels * 1.5)); // Adjusted for a more triangular shape
+
+          ctx.beginPath();
+          ctx.moveTo(x + treeWidth / 2, currentHeight - levelHeight);
+          ctx.lineTo(x + (treeWidth - currentWidth) / 2, currentHeight);
+          ctx.lineTo(x + (treeWidth + currentWidth) / 2, currentHeight);
+          ctx.closePath();
+          ctx.fillStyle = i % 2 === 0 ? "#228B22" : "#006400";
+          ctx.fill();
+        }
+      }
+
+      function drawRockFormation(x, height) {
+        const gradient = ctx.createLinearGradient(
+          x,
+          0,
+          x + obstacleWidth,
+          height
+        );
+        gradient.addColorStop(0, "#A9A9A9");
+        gradient.addColorStop(1, "#696969");
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x + obstacleWidth, 0);
+        ctx.lineTo(x + obstacleWidth, height);
+        ctx.lineTo(x + obstacleWidth * 0.8, height * 1.2);
+        ctx.lineTo(x + obstacleWidth * 0.5, height);
+        ctx.lineTo(x + obstacleWidth * 0.2, height * 1.1);
+        ctx.lineTo(x, height);
+        ctx.closePath();
+        ctx.fill();
+
+        // Add some detail to the rock
+        ctx.strokeStyle = "#808080";
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 3; i++) {
+          ctx.beginPath();
+          ctx.moveTo(
+            x + Math.random() * obstacleWidth * 0.2,
+            Math.random() * height
+          );
+          ctx.lineTo(
+            x + obstacleWidth * (0.5 + Math.random() * 0.5),
+            Math.random() * height
+          );
+          ctx.stroke();
+        }
+      }
+
+      function drawLeaf(x, y) {
+        ctx.fillStyle = "#27AE60";
+        ctx.beginPath();
+        ctx.ellipse(x, y, 5, 10, Math.PI / 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function updateLeaves() {
+        if (leaves.length < 20) {
+          leaves.push({
+            x: Math.random() * canvas.width,
+            y: 0,
+            speed: Math.random() * 2 + 1,
+            rotation: Math.random() * Math.PI * 2,
+          });
         }
 
-        function drawRockFormation(x, height) {
-            const gradient = ctx.createLinearGradient(x, 0, x + obstacleWidth, height);
-            gradient.addColorStop(0, '#A9A9A9');
-            gradient.addColorStop(1, '#696969');
+        leaves.forEach((leaf, index) => {
+          leaf.y += leaf.speed;
+          leaf.x += Math.sin(leaf.y / 50) * 2;
+          leaf.rotation += 0.05;
+          if (leaf.y > canvas.height) {
+            leaves.splice(index, 1);
+          }
+        });
+      }
 
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x + obstacleWidth, 0);
-            ctx.lineTo(x + obstacleWidth, height);
-            ctx.lineTo(x + obstacleWidth * 0.8, height * 1.2);
-            ctx.lineTo(x + obstacleWidth * 0.5, height);
-            ctx.lineTo(x + obstacleWidth * 0.2, height * 1.1);
-            ctx.lineTo(x, height);
-            ctx.closePath();
-            ctx.fill();
+      function drawObstacles() {
+        obstacles.forEach((obstacle) => {
+          drawFirTree(obstacle.x, obstacle.bottomHeight);
+          drawRockFormation(obstacle.x, obstacle.topHeight);
+        });
+      }
 
-            // Add some detail to the rock
-            ctx.strokeStyle = '#808080';
-            ctx.lineWidth = 2;
-            for (let i = 0; i < 3; i++) {
-                ctx.beginPath();
-                ctx.moveTo(x + Math.random() * obstacleWidth * 0.2, Math.random() * height);
-                ctx.lineTo(x + obstacleWidth * (0.5 + Math.random() * 0.5), Math.random() * height);
-                ctx.stroke();
-            }
+      function updateObstacles() {
+        if (
+          obstacles.length === 0 ||
+          obstacles[obstacles.length - 1].x < canvas.width - 300
+        ) {
+          let topHeight =
+            Math.random() * (canvas.height - gapHeight - 150) + 100;
+          obstacles.push({
+            x: canvas.width,
+            topHeight: topHeight,
+            bottomHeight: canvas.height - topHeight - gapHeight,
+            passed: false,
+          });
         }
 
-        function drawLeaf(x, y) {
-            ctx.fillStyle = '#27AE60';
-            ctx.beginPath();
-            ctx.ellipse(x, y, 5, 10, Math.PI / 4, 0, Math.PI * 2);
-            ctx.fill();
-        }
+        obstacles.forEach((obstacle) => {
+          obstacle.x -= obstacleSpeed;
 
-        function updateLeaves() {
-            if (leaves.length < 20) {
-                leaves.push({
-                    x: Math.random() * canvas.width,
-                    y: 0,
-                    speed: Math.random() * 2 + 1,
-                    rotation: Math.random() * Math.PI * 2
-                });
-            }
-
-            leaves.forEach((leaf, index) => {
-                leaf.y += leaf.speed;
-                leaf.x += Math.sin(leaf.y / 50) * 2;
-                leaf.rotation += 0.05;
-                if (leaf.y > canvas.height) {
-                    leaves.splice(index, 1);
-                }
-            });
-        }
-
-        function drawObstacles() {
-            obstacles.forEach(obstacle => {
-                drawFirTree(obstacle.x, obstacle.bottomHeight);
-                drawRockFormation(obstacle.x, obstacle.topHeight);
-            });
-        }
-
-        function updateObstacles() {
-            if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - 300) {
-                let topHeight = Math.random() * (canvas.height - gapHeight - 150) + 100;
-                obstacles.push({
-                    x: canvas.width,
-                    topHeight: topHeight,
-                    bottomHeight: canvas.height - topHeight - gapHeight
-                });
-            }
-
-            obstacles.forEach(obstacle => {
-                obstacle.x -= obstacleSpeed;
-            });
-
-            if (obstacles[0] && obstacles[0].x + obstacleWidth < 0) {
-                obstacles.shift();
-                score++;
-            }
-        }
-
-        function checkCollision() {
-            if (invincible) return;
-
-            const hitbox = {
-                x: pineconeX - pineconeWidth / 2,
-                y: pineconeY,
-                width: pineconeWidth,
-                height: pineconeHeight
-            };
-
-            for (let obstacle of obstacles) {
-                if (
-                    hitbox.x < obstacle.x + obstacleWidth &&
-                    hitbox.x + hitbox.width > obstacle.x &&
-                    (hitbox.y < obstacle.topHeight || hitbox.y + hitbox.height > canvas.height - obstacle.bottomHeight)
-                ) {
-                    gameOver = true;
-                }
-            }
-
-            if (pineconeY + pineconeHeight > canvas.height || pineconeY < 0) {
-                gameOver = true;
-            }
-        }
-
-        function drawScore() {
-            ctx.fillStyle = 'black';
-            ctx.font = 'bold 24px Arial';
-            ctx.fillText(`Score: ${score}`, 10, 30);
-        }
-
-        function drawStartScreen() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'white';
-            ctx.font = 'bold 48px Arial';
-            ctx.fillText('Tanne Hopper', canvas.width / 2 - 140, canvas.height / 2 - 50);
-            ctx.font = '24px Arial';
-            ctx.fillText('Press Space to Start', canvas.width / 2 - 100, canvas.height / 2 + 20);
-            ctx.fillText('Keep pressing Space to hop!', canvas.width / 2 - 130, canvas.height / 2 + 60);
-        }
-
-        function gameLoop() {
-            ctx.fillStyle = skyGradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            updateLeaves();
-            leaves.forEach(leaf => {
-                ctx.save();
-                ctx.translate(leaf.x, leaf.y);
-                ctx.rotate(leaf.rotation);
-                drawLeaf(0, 0);
-                ctx.restore();
-            });
-
-            if (!gameStarted) {
-                drawStartScreen();
-                drawPinecone(pineconeX, pineconeY);
-            } else if (!gameOver) {
-                pineconeVelocity += gravity;
-                pineconeY += pineconeVelocity;
-
-                if (invincible) {
-                    invincibilityTimer--;
-                    if (invincibilityTimer <= 0) {
-                        invincible = false;
-                    }
-                }
-
-                updateObstacles();
-                checkCollision();
-
-                drawObstacles();
-                drawPinecone(pineconeX, pineconeY);
-                drawScore();
-            } else {
-                drawObstacles();
-                drawPinecone(pineconeX, pineconeY);
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 48px Arial';
-                ctx.fillText('Game Over!', canvas.width / 2 - 100, canvas.height / 2);
-                ctx.font = '24px Arial';
-                ctx.fillText(`Final Score: ${score}`, canvas.width / 2 - 70, canvas.height / 2 + 40);
-                ctx.fillText('Press Space to Restart', canvas.width / 2 - 100, canvas.height / 2 + 80);
-            }
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        function resetGame() {
-            pineconeY = 200;
-            pineconeVelocity = 0;
-            score = 0;
-            obstacles = [];
-            gameOver = false;
-            invincible = false;
-            invincibilityTimer = 0;
-        }
-
-        document.addEventListener('keydown', (event) => {
-            if (event.code === 'Space') {
-                event.preventDefault();
-                if (!gameStarted) {
-                    gameStarted = true;
-                } else if (gameOver) {
-                    resetGame();
-                    gameStarted = true;
-                } else {
-                    pineconeVelocity = -7;
-                    invincible = true;
-                    invincibilityTimer = 20;
-                }
-            }
+          // Check if pinecone has passed the center of the obstacle
+          if (!obstacle.passed && pineconeX > obstacle.x + obstacleWidth / 2) {
+            obstacle.passed = true;
+            score++;
+          }
         });
 
-        gameLoop();
+        if (obstacles[0] && obstacles[0].x + obstacleWidth < 0) {
+          obstacles.shift();
+        }
+      }
+
+      function checkCollision() {
+        if (invincible) return;
+
+        const hitbox = {
+          x: pineconeX - pineconeWidth / 2,
+          y: pineconeY,
+          width: pineconeWidth,
+          height: pineconeHeight,
+        };
+
+        for (let obstacle of obstacles) {
+          if (
+            hitbox.x < obstacle.x + obstacleWidth &&
+            hitbox.x + hitbox.width > obstacle.x &&
+            (hitbox.y < obstacle.topHeight ||
+              hitbox.y + hitbox.height > canvas.height - obstacle.bottomHeight)
+          ) {
+            gameOver = true;
+          }
+        }
+
+        if (pineconeY + pineconeHeight > canvas.height || pineconeY < 0) {
+          gameOver = true;
+        }
+      }
+
+      function drawScore() {
+        ctx.fillStyle = "black";
+        ctx.font = "bold 24px Arial";
+        ctx.fillText(`Score: ${score}`, 10, 30);
+      }
+
+      function drawStartScreen() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "white";
+        ctx.font = "bold 48px Arial";
+        ctx.fillText(
+          "Tanne Hopper",
+          canvas.width / 2 - 140,
+          canvas.height / 2 - 50
+        );
+        ctx.font = "24px Arial";
+        ctx.fillText(
+          "Press Space or Click to Start",
+          canvas.width / 2 - 140,
+          canvas.height / 2 + 20
+        );
+        ctx.fillText(
+          "Keep pressing Space or clicking to hop!",
+          canvas.width / 2 - 180,
+          canvas.height / 2 + 60
+        );
+      }
+
+      function gameLoop() {
+        ctx.fillStyle = skyGradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        updateLeaves();
+        leaves.forEach((leaf) => {
+          ctx.save();
+          ctx.translate(leaf.x, leaf.y);
+          ctx.rotate(leaf.rotation);
+          drawLeaf(0, 0);
+          ctx.restore();
+        });
+
+        if (!gameStarted) {
+          drawStartScreen();
+          drawPinecone(pineconeX, pineconeY);
+        } else if (!gameOver) {
+          pineconeVelocity += gravity;
+          pineconeY += pineconeVelocity;
+
+          if (invincible) {
+            invincibilityTimer--;
+            if (invincibilityTimer <= 0) {
+              invincible = false;
+            }
+          }
+
+          updateObstacles();
+          checkCollision();
+
+          drawObstacles();
+          drawPinecone(pineconeX, pineconeY);
+          drawScore();
+        } else {
+          drawObstacles();
+          drawPinecone(pineconeX, pineconeY);
+          ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "white";
+          ctx.font = "bold 48px Arial";
+          ctx.fillText("Game Over!", canvas.width / 2 - 100, canvas.height / 2);
+          ctx.font = "24px Arial";
+          ctx.fillText(
+            `Final Score: ${score}`,
+            canvas.width / 2 - 70,
+            canvas.height / 2 + 40
+          );
+          ctx.fillText(
+            "Press Space or Click to Restart",
+            canvas.width / 2 - 140,
+            canvas.height / 2 + 80
+          );
+        }
+
+        requestAnimationFrame(gameLoop);
+      }
+
+      function resetGame() {
+        pineconeY = 100;
+        pineconeVelocity = 0;
+        score = 0;
+        obstacles = [];
+        gameOver = false;
+        invincible = false;
+        invincibilityTimer = 0;
+      }
+
+      function hop() {
+        if (!gameStarted) {
+          gameStarted = true;
+        } else if (gameOver) {
+          resetGame();
+          gameStarted = true;
+        } else {
+          pineconeVelocity = -7;
+          invincible = true;
+          invincibilityTimer = 20;
+        }
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if (event.code === "Space") {
+          event.preventDefault();
+          hop();
+        }
+      });
+
+      canvas.addEventListener("click", (event) => {
+        event.preventDefault();
+        hop();
+      });
+
+      gameLoop();
     </script>
-</body>
+  </body>
 </html>
