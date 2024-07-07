@@ -9,6 +9,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="common-styles.css" />
+    <script src="logger.js"></script>
     <script src="config.js"></script>
     <script src="header.js"></script>
   </head>
@@ -18,7 +19,7 @@
     </header>
 
     <main class="container">
-      <h1>Welcome to Your Styled Page</h1>
+      <h1>Welcome to My Styled Page</h1>
 
       <div class="card">
         <h2>About Us <span class="badge">New</span></h2>
@@ -288,28 +289,26 @@
     <script>
       try {
         document.addEventListener("DOMContentLoaded", function () {
-          console.log("DOM fully loaded");
+          var logger = new Logger(LogLevel.DEBUG);
+          logger.debug("DOM fully loaded");
           try {
-            console.log("Creating Header instance");
+            logger.debug("Creating Header instance");
             var header = new Header(headerConfig);
-            console.log("Header instance created");
+            logger.debug("Header instance created");
             header.render("main-header");
-            console.log("Header rendered");
+            logger.debug("Header rendered");
           } catch (error) {
-            console.error(
-              "Error in header initialization or rendering:",
-              error
-            );
+            logger.error("Error in header initialization or rendering:", error);
           }
         });
       } catch (error) {
-        console.error("Caught error in script:", error);
-        console.error("Error occurred on line:", error.lineNumber);
+        logger.error("Caught error in script:", error);
+        logger.error("Error occurred on line:", error.lineNumber);
       }
 
       // Prevent errors from other scripts from breaking our functionality
       window.addEventListener("error", function (event) {
-        console.error("Caught global error:", event.error);
+        logger.error("Caught global error:", event.error);
         event.preventDefault();
       });
     </script>

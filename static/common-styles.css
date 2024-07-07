@@ -148,7 +148,12 @@ header nav {
   z-index: 1;
 }
 
-.button {
+/* Button styles */
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
   display: inline-block;
   padding: 10px 20px;
   background: var(--secondary-light);
@@ -157,18 +162,32 @@ header nav {
   border: none;
   border-radius: 5px;
   transition: background-color 0.3s, transform 0.2s;
+  cursor: pointer; /* This ensures the pointer cursor for all button types */
 }
 
-.button:hover {
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover {
   background: var(--accent-light);
   transform: translateY(-2px);
 }
 
-.dark-mode .button {
+/* Dark mode adjustments */
+.dark-mode .button,
+.dark-mode button,
+.dark-mode input[type="submit"],
+.dark-mode input[type="reset"],
+.dark-mode input[type="button"] {
   background: var(--secondary-dark);
 }
 
-.dark-mode .button:hover {
+.dark-mode .button:hover,
+.dark-mode button:hover,
+.dark-mode input[type="submit"]:hover,
+.dark-mode input[type="reset"]:hover,
+.dark-mode input[type="button"]:hover {
   background: var(--accent-dark);
 }
 

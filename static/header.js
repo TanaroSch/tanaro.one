@@ -1,5 +1,7 @@
 // header.js
 (function (window) {
+  var logger = new Logger(LogLevel.INFO);
+
   function Header(config) {
     this.config = config;
   }
@@ -97,35 +99,35 @@
   };
 
   Header.prototype.render = function (targetId) {
-    console.log("Rendering header");
+    logger.debug("Rendering header");
     var targetElement = document.getElementById(targetId);
     if (targetElement) {
       targetElement.innerHTML = this.generateHeader();
-      console.log("Header HTML inserted");
+      logger.debug("Header HTML inserted");
       this.setupEventListeners();
 
       // Add footer to the body
       document.body.insertAdjacentHTML("beforeend", this.generateFooter());
       logger.debug("Footer HTML inserted");
     } else {
-      console.error('Element with id "' + targetId + '" not found.');
+      logger.error('Element with id "' + targetId + '" not found.');
     }
   };
 
   Header.prototype.setupEventListeners = function () {
-    console.log("Setting up event listeners");
+    logger.debug("Setting up event listeners");
     var modeToggle = document.getElementById("mode-toggle");
-    console.log("Mode toggle button:", modeToggle);
+    logger.debug("Mode toggle button:", modeToggle);
     if (modeToggle) {
       modeToggle.addEventListener("click", this.toggleDarkMode.bind(this));
-      console.log("Event listener added successfully");
+      logger.debug("Event listener added successfully");
     } else {
-      console.error("Mode toggle button not found");
+      logger.error("Mode toggle button not found");
     }
   };
 
   Header.prototype.toggleDarkMode = function () {
-    console.log("Toggling dark mode");
+    logger.info("Toggling dark mode");
     document.body.classList.toggle("dark-mode");
     document.body.classList.toggle("light-mode");
   };
