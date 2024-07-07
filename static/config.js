@@ -1,42 +1,46 @@
 // config.js
-const headerConfig = {
-    "branding": {
-        "text": "Tanaro"
+var headerConfig = {
+  branding: {
+    text: "Tanaro",
+  },
+  navigation: [
+    {
+      text: "Home",
+      link: "#home",
     },
-    "navigation": [
+    {
+      text: "About",
+      link: "#about",
+    },
+    {
+      text: "Services",
+      link: "#services",
+      dropdown: [
         {
-            "text": "Home",
-            "link": "#home"
+          text: "Web Design",
+          link: "#web-design",
         },
         {
-            "text": "About",
-            "link": "#about"
+          text: "App Development",
+          link: "#app-development",
         },
         {
-            "text": "Services",
-            "link": "#services",
-            "dropdown": [
-                {
-                    "text": "Web Design",
-                    "link": "#web-design"
-                },
-                {
-                    "text": "App Development",
-                    "link": "#app-development"
-                },
-                {
-                    "text": "SEO Optimization",
-                    "link": "#seo"
-                },
-                {
-                    "text": "IT Consulting",
-                    "link": "#consulting"
-                }
-            ]
+          text: "SEO Optimization",
+          link: "#seo",
         },
         {
-            "text": "Contact",
-            "link": "#contact"
-        }
-    ]
+          text: "IT Consulting",
+          link: "#consulting",
+        },
+      ],
+    },
+    {
+      text: "Contact",
+      link: "#contact",
+    },
+  ],
+  developerInfo: {
+    name: "Tanaro",
+    website: "https://tanaro.one", // Replace with your actual website URL
+  },
 };

@@ -53,7 +53,7 @@ header {
 .container {
   width: 80%;
   margin: auto;
-  overflow: visible; /* Changed from hidden to allow dropdown to be visible */
+  overflow: visible;
   padding: 0 20px;
 }
 
@@ -145,7 +145,7 @@ header nav {
 /* Main content styles */
 .container {
   position: relative;
-  z-index: 1; /* Ensure main content is below the header and dropdown */
+  z-index: 1;
 }
 
 .button {
@@ -727,7 +727,7 @@ textarea {
   border-radius: 4px;
   font-size: 16px;
   transition: border-color 0.3s, box-shadow 0.3s;
-  color: var(--text-light); /* Updated to use the text color variable */
+  color: var(--text-light);
   background-color: var(--background-light);
 }
 
@@ -828,7 +828,7 @@ textarea:focus {
   visibility: hidden;
   width: 120px;
   background-color: var(--primary-light);
-  color: #ffffff; /* Changed to white for better contrast */
+  color: #ffffff;
   text-align: center;
   border-radius: 6px;
   padding: 8px;
@@ -861,10 +861,55 @@ textarea:focus {
 
 .dark-mode .tooltip .tooltiptext {
   background-color: var(--secondary-dark);
-  color: #ffffff; /* Kept white for dark mode as well */
+  color: #ffffff;
   box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
 }
 
 .dark-mode .tooltip .tooltiptext::after {
   border-color: var(--secondary-dark) transparent transparent transparent;
+}
+
+.footer {
+  background-color: var(--primary-light);
+  color: #ffffff;
+  padding: 5px 0;
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  font-size: 0.9em;
+}
+
+.footer p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.footer a {
+  color: var(--accent-light);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: var(--secondary-light);
+}
+
+.dark-mode .footer {
+  background-color: var(--primary-dark);
+}
+
+.dark-mode .footer a {
+  color: var(--accent-dark);
+}
+
+.dark-mode .footer a:hover {
+  color: var(--secondary-dark);
+}
+
+/* Ensure the footer doesn't overlap content on short pages */
+body {
+  min-height: 100vh;
+  position: relative;
+  padding-bottom: 40px;
 }
