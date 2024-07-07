@@ -6,31 +6,23 @@ var headerConfig = {
   navigation: [
     {
       text: "Home",
-      link: "#home",
+      link: "/",
     },
     {
       text: "About",
-      link: "#about",
+      link: "/about.html",
     },
     {
-      text: "Services",
-      link: "#services",
+      text: "Tools",
+      link: "#tools",
       dropdown: [
         {
-          text: "Web Design",
-          link: "#web-design",
+          text: "Image Cropper",
+          link: "/tools/image/cropper/index.html",
         },
         {
-          text: "App Development",
-          link: "#app-development",
-        },
-        {
-          text: "SEO Optimization",
-          link: "#seo",
-        },
-        {
-          text: "IT Consulting",
-          link: "#consulting",
+          text: "BIRME",
+          link: "/tools/image/birme/index.html",
         },
       ],
     },
@@ -41,6 +33,6 @@ var headerConfig = {
   ],
   developerInfo: {
     name: "Tanaro",
-    website: "https://tanaro.one", // Replace with your actual website URL
+    website: "https://tanaro.one",
   },
 };

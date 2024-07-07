@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Template Page</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="static/common-styles.css" />
+    <script src="static/logger.js"></script>
+    <script src="static/headerConfig.js"></script>
+    <script src="static/svgPaths.js"></script>
+    <script src="static/header.js"></script>
+    <style>
+      /* Ensure the html and body take up the full height of the viewport */
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: "Roboto", "Arial", sans-serif;
+        line-height: 1.6;
+        transition: background-color 0.3s, color 0.3s;
+        box-sizing: border-box;
+      }
+
+      /* Flexbox for the body to ensure the footer stays at the bottom */
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* Flex-grow for main to take up the remaining space */
+      main {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body class="light-mode">
+    <header id="main-header">
+      <!-- Header content will be dynamically inserted here -->
+    </header>
+
+    <main class="container">
+      <h1>Welcome to the Template Page</h1>
+      <p>This is a placeholder for the main content of the page.</p>
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var header = new Header(headerConfig);
+        header.render("main-header");
+      });
+
+      // To toggle dark mode
+      document
+        .getElementById("mode-toggle")
+        .addEventListener("click", function () {
+          document.body.classList.toggle("dark-mode");
+          document.body.classList.toggle("light-mode");
+        });
+    </script>
+  </body>
+</html>
