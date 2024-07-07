@@ -9,8 +9,8 @@ const config = {
     ],
     links: [
         { name: "GitHub", url: "https://github.com/TanaroSch" },
-        { name: "Instagram", url: "https://www.instagram.com/tanaro_s/" },
-        { name: "LinkedIn", url: "https://www.linkedin.com/in/tanaro/" }
+        { name: "LinkedIn", url: "https://linkedin.com/in/tanaro/" },
+        { name: "Instagram", url: "https://instagram.com/tanaro_s/" },
     ],
     games: [
         { name: "🌲", file: "tanne.html" },
