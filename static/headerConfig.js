@@ -6,11 +6,11 @@ var headerConfig = {
   navigation: [
     {
       text: "Home",
-      link: "index.html",
+      link: "/index.html",
     },
     {
       text: "About",
-      link: "./about.html",
+      link: "/about.html",
     },
     /*{
       text: "Tools",
@@ -32,7 +32,7 @@ var headerConfig = {
       dropdown: [
         {
           text: "AI Image Quiz",
-          link: "./extras/quiz/index.html",
+          link: "/extras/quiz/index.html",
         },
       ],
     },
