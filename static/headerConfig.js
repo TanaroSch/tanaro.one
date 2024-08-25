@@ -6,7 +6,7 @@ var headerConfig = {
   navigation: [
     {
       text: "Home",
-      link: "./index.html",
+      link: "index.html",
     },
     {
       text: "About",
@@ -28,17 +28,17 @@ var headerConfig = {
     },*/
     {
       text: "Extras",
-      link: "./quiz/index.html",
+      link: "/extras/quiz/index.html",
       dropdown: [
         {
           text: "AI Image Quiz",
-          link: "./quiz/index.html",
+          link: "./extras/quiz/index.html",
         },
       ],
     },
     {
       text: "Contact",
-      link: "./contact.html",
+      link: "/contact.html",
     },
   ],
   developerInfo: {
