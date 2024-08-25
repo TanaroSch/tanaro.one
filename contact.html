@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Me</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="static/common-styles.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <script src="static/logger.js"></script>
+    <script src="static/headerConfig.js"></script>
+    <script src="static/svgPaths.js"></script>
+    <script src="static/header.js"></script>
+    <script src="static/config.js"></script>
+    <style>
+      /* Ensure the html and body take up the full height of the viewport */
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: "Roboto", "Arial", sans-serif;
+        line-height: 1.6;
+        transition: background-color 0.3s, color 0.3s;
+        box-sizing: border-box;
+      }
+
+      /* Flexbox for the body to ensure the footer stays at the bottom */
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* Flex-grow for main to take up the remaining space */
+      main {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body class="light-mode">
+    <header id="main-header">
+      <!-- Header content will be dynamically inserted here -->
+    </header>
+
+    <main class="container" role="main">
+      <h1>Contact Me</h1>
+
+      <div class="card">
+        <h2>Get in Touch</h2>
+        <p>
+          Feel free to reach out to me using the form below. I'll get back to
+          you as soon as possible.
+        </p>
+
+        <form id="contact-form" onsubmit="return sendEmail();">
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" name="subject" required />
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+          </div>
+
+          <button type="submit" class="button">Send Message</button>
+        </form>
+      </div>
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var header = new Header(headerConfig);
+        header.render("main-header");
+      });
+
+      // Dark mode toggle
+      document
+        .getElementById("mode-toggle")
+        .addEventListener("click", function () {
+          document.body.classList.toggle("dark-mode");
+          document.body.classList.toggle("light-mode");
+        });
+
+      // Email obfuscation and form submission
+      function sendEmail() {
+        var form = document.getElementById("contact-form");
+        var formData = new FormData(form);
+
+        var encodedEmail = "aG9tZXBhZ2VAdGFuYXJvLm9uZQ=="; // Base64 encoded email
+        var decodedEmail = atob(encodedEmail);
+
+        // Construct the mailto link
+        var mailtoLink =
+          "mailto:" +
+          decodedEmail +
+          "?subject=" +
+          encodeURIComponent(formData.get("subject")) +
+          "&body=" +
+          encodeURIComponent(
+            "Name: " +
+              formData.get("name") +
+              "\nEmail: " +
+              formData.get("email") +
+              "\n\nMessage:\n" +
+              formData.get("message")
+          );
+
+        // Open the user's email client
+        window.location.href = mailtoLink;
+
+        // Prevent the form from submitting normally
+        return false;
+      }
+    </script>
+  </body>
+</html>

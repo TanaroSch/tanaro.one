@@ -6,13 +6,13 @@ var headerConfig = {
   navigation: [
     {
       text: "Home",
-      link: "/",
+      link: "./index.html",
     },
     {
       text: "About",
-      link: "/about.html",
+      link: "./about.html",
     },
-    {
+    /*{
       text: "Tools",
       link: "#tools",
       dropdown: [
@@ -25,10 +25,20 @@ var headerConfig = {
           link: "/tools/image/birme/index.html",
         },
       ],
+    },*/
+    {
+      text: "Extras",
+      link: "./quiz/index.html",
+      dropdown: [
+        {
+          text: "AI Image Quiz",
+          link: "./quiz/index.html",
+        },
+      ],
     },
     {
       text: "Contact",
-      link: "#contact",
+      link: "./contact.html",
     },
   ],
   developerInfo: {

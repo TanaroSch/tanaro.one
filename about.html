@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Tanaro</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="static/common-styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <script src="static/logger.js"></script>
+    <script src="static/headerConfig.js"></script>
+    <script src="static/svgPaths.js"></script>
+    <script src="static/header.js"></script>
+    <script src="static/config.js"></script>
+    <style>
+      /* Additional styles for the skills section */
+      .skills-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .skills-list .badge {
+        margin: 0; /* Reset any existing margins */
+        padding: 8px 16px; /* Increase padding for larger badges */
+        font-size: 14px; /* Slightly larger font size */
+      }
+    </style>
+  </head>
+  <body class="light-mode">
+    <header id="main-header">
+      <!-- Header content will be dynamically inserted here -->
+    </header>
+
+    <main class="container">
+      <h1>About Me</h1>
+
+      <section class="about-section">
+        <p>
+          My name is Tanaro Schädler, and I am a computer science graduate.
+          While I wrote my Bachelor's thesis on the topic of Zero Trust
+          Security, I switched my focus to Machine Learning and Artificial
+          Intelligence during my Master's studies. I am passionate about using
+          technology to solve real-world problems and am excited to pursue a
+          career in the field of data science and machine learning.</p>
+          <p>But I am also interested in software development and cybersecurity, as well as
+          system administration. In my free time, I enjoy pursuing these fields
+          about computers and servers as a hobby. Aside from computers, I like
+          to boulder with friends, enjoy nature, and go hiking in the mountains
+          or cycling along the Danube.
+        </p>
+      </section>
+
+      <section class="about-section">
+        <h2>Education</h2>
+        <p>
+          M.Sc. in Computer Science (Expected 11/2024)<br />
+          Ulm University
+        </p>
+        <p>
+          B.Sc. in Computer Science (2022)<br />
+          Ulm University
+        </p>
+      </section>
+
+      <section class="about-section">
+        <h2>Skills</h2>
+        <div class="skills-list">
+          <span class="badge">Python</span>
+          <span class="badge">JavaScript</span>
+          <span class="badge">Machine Learning</span>
+          <span class="badge">LLMs</span>
+          <span class="badge">Data Science</span>
+        </div>
+      </section>
+
+      <section class="about-section">
+        <h2>Skills and fields of work I did in the past</h2>
+        <div class="skills-list">
+          <span class="badge">SQL</span>
+          <span class="badge">Java</span>
+          <span class="badge">C++</span>
+          <span class="badge">C#</span>
+          <span class="badge">PHP</span>
+          <span class="badge">Proxmox</span>
+          <span class="badge">Active Directory administration</span>
+          <span class="badge">and many more...</span>
+          <!-- Add more skills as needed -->
+        </div>
+      </section>
+
+      <section class="about-section">
+        <h2>Projects</h2>
+        <div class="projects-list">
+          <div class="card">
+            <h3>VLM UI: Vision Language Model User Interface</h3>
+            <p>
+              VLM UI is a pioneering web-based user interface designed for efficient interaction with Vision Language Models (VLMs). Unlike existing tools for Large Language Models (LLMs), VLM UI fills a gap in the market by providing:
+            </p>
+            <ul>
+              <li>User-friendly frontend for multiple VLMs</li>
+              <li>Current support for PaliGemma, Phi3-Vision, and Florence-2</li>
+              <li>Plans for integration with additional VLMs</li>
+              <li>Complementary Command Line Interface (CLI) for task automation</li>
+            </ul>
+            <p>
+              This project evolved from separate UIs for PaliGemma and Phi3-Vision, which are available on GitHub. VLM UI is a personal project that I'm developing independently in my free time, aimed at enhancing accessibility and usability in the growing field of vision-language AI.
+            </p>
+          </div>
+          <div class="card">
+            <h3>DVS 3: Student Union Printing System Management Tool</h3>
+            <p>
+              DVS 3 is a comprehensive web-based management tool for our university's student union printing system. This project represents a complete rewrite of the previous PHP-based DVS 2 system, with significant enhancements:
+            </p>
+            <ul>
+              <li>Developed using Python with the Django framework</li>
+              <li>React-based frontend for improved user experience</li>
+              <li>New functionalities: e.g. LDAP integration and enhanced inventory management</li>
+              <li>Collaborative effort with three other students</li>
+            </ul>
+            <p>
+              My primary contributions to this team project include:
+            </p>
+            <ul>
+              <li>Payment processing, including state flow management</li>
+              <li>Authentication system implementation (frontend and backend)</li>
+              <li>LaTeX-based document generation and email notification</li>
+            </ul>
+            <p>
+              This project increased my proficiency in full-stack web development, team collaboration, and creating practical solutions for real-world organizational needs.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Connected Lamps Project</h3>
+            <p>
+              Inspired by the K-drama "I'm Not a Robot," I developed a pair of
+              internet-connected lamps. Key features include:
+              <ul>
+                <li>ESP32 microcontroller-based, programmed in C++ using PlatformIO</li>
+                <li>Dual control options: physical buttons or custom Android app written in Kotlin</li>
+                <li>Bluetooth Low Energy (BLE) connectivity between app and ESP32s</li>
+                <li>Original ESP-BLE interface code published on <a href="https://github.com/TanaroSch/android-esp32-ble">GitHub</a> as an open-source template</li>
+                <li>Lamps interconnected via WebSocket server</li>
+              </ul>
+              This project helped me develop my skills in IoT development, mobile app creation, and even led to open-source contribution.
+            </p>
+          </div>
+          <!-- Add more project cards as needed -->
+        </div>
+      </section>
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var header = new Header(headerConfig);
+        header.render("main-header");
+      });
+
+      // Dark mode toggle
+      document.getElementById("mode-toggle").addEventListener("click", function() {
+        document.body.classList.toggle("dark-mode");
+        document.body.classList.toggle("light-mode");
+      });
+    </script>
+  </body>
+</html>

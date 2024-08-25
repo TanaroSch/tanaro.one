@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Personal Website</title>
     <link rel="stylesheet" href="static/common-styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <style>
       :root {
         --bg-color: #111111;
@@ -383,9 +384,22 @@
         config.links.forEach((link) => {
           const a = document.createElement("a");
           a.href = link.url;
-          a.textContent = link.name;
           a.className = "btn";
           a.target = "_blank";
+          a.rel = "noopener noreferrer";
+
+          // Create icon element
+          const icon = document.createElement("i");
+          icon.className = link.icon;
+
+          // Create text node for the link name
+          const textNode = document.createTextNode(link.name);
+
+          // Append icon and text to the link
+          a.appendChild(icon);
+          a.appendChild(document.createTextNode(" ")); // Add a space between icon and text
+          a.appendChild(textNode);
+
           linksElement.appendChild(a);
         });
       }
