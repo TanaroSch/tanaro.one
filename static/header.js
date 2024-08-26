@@ -11,7 +11,7 @@
       '\
         <div class="container">\
             <div class="branding-container">\
-                <a href="./index.html" class="branding-link">\
+                <a href="/index.html" class="branding-link">\
                     <div class="header-svg">\
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" class="neural-network-svg" width="100%" height="100%">\
                             ' +
