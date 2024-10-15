@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hangeul Conversion</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../static/common-styles.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico" />
+    <script src="../../static/logger.js"></script>
+    <script src="../../static/headerConfig.js"></script>
+    <script src="../../static/svgPaths.js"></script>
+    <script src="../../static/header.js"></script>
+    <style>
+      #virtual-keyboard {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      #keyboard-settings {
+        position: relative;
+        display: inline-block;
+      }
+
+      #settings-button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      #settings-menu {
+        display: none;
+        position: absolute;
+        top: 30px;
+        left: 0;
+        background-color: var(--secondary-light);
+        padding: 10px;
+        border-radius: 5px;
+        z-index: 1;
+      }
+
+      #settings-menu.visible {
+        display: block;
+      }
+
+      #settings-menu label,
+      #settings-menu select {
+        color: var(--text-light);
+      }
+      .keyboard-row {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 5px;
+      }
+      .key {
+        padding: 10px;
+        text-align: center;
+        background-color: var(--primary-light);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 2px;
+        transition: background-color 0.3s;
+      }
+      .key:hover {
+        background-color: var(--secondary-light);
+      }
+      .dark-mode .key {
+        background-color: var(--primary-dark);
+      }
+      .dark-mode .key:hover {
+        background-color: var(--secondary-dark);
+      }
+    </style>
+  </head>
+  <body class="light-mode">
+    <header id="main-header">
+      <!-- Header content will be dynamically inserted here -->
+    </header>
+
+    <main class="container">
+      <h1>Hangeul Conversion</h1>
+
+      <div class="card">
+        <h2>Input Text</h2>
+        <div class="form-group">
+          <div id="mode-indicator">Current Mode: Hangeul</div>
+          <textarea
+            id="input-text"
+            rows="5"
+            placeholder="Hangeul Mode: Type here or use the virtual keyboard below"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Virtual Hangeul Keyboard</h2>
+        <div id="virtual-keyboard"></div>
+        <div id="keyboard-settings">
+          <button id="settings-button">⚙️</button>
+          <div id="settings-menu" class="hidden">
+            <label for="keyboard-layout">Keyboard Layout:</label>
+            <select id="keyboard-layout">
+              <option value="QWERTY">QWERTY</option>
+              <option value="QWERTZ">QWERTZ</option>
+              <!-- Add more layouts as needed -->
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>How to Use</h2>
+        <ul>
+          <li>
+            Type directly into the text area using your physical keyboard. Latin
+            characters will be automatically converted to Hangeul.
+          </li>
+          <li>
+            Click on the virtual keyboard buttons to input Hangeul characters.
+          </li>
+          <li>
+            Press <strong>Ctrl + Alt + H</strong> to toggle between Hangeul Mode
+            and Romanization Mode.
+          </li>
+          <li>
+            Hangeul characters will automatically combine into syllables as you
+            type.
+          </li>
+        </ul>
+      </div>
+    </main>
+
+    <!-- Include Hangul.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/hangul-js@0.2.6/hangul.js"></script>
+    <script>
+      try {
+        document.addEventListener("DOMContentLoaded", function () {
+          var logger = new Logger(LogLevel.DEBUG);
+          logger.debug("DOM fully loaded");
+          try {
+            logger.debug("Creating Header instance");
+            var header = new Header(headerConfig);
+            logger.debug("Header instance created");
+            header.render("main-header");
+            logger.debug("Header rendered");
+          } catch (error) {
+            logger.error("Error in header initialization or rendering:", error);
+          }
+        });
+      } catch (error) {
+        logger.error("Caught error in script:", error);
+        logger.error("Error occurred on line:", error.lineNumber);
+      }
+
+      // Prevent errors from other scripts from breaking our functionality
+      window.addEventListener("error", function (event) {
+        logger.error("Caught global error:", event.error);
+        event.preventDefault();
+      });
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Keyboard mappings
+        const keyboardMapQWERTY = {
+          q: "ㅂ",
+          w: "ㅈ",
+          e: "ㄷ",
+          r: "ㄱ",
+          t: "ㅅ",
+          y: "ㅛ",
+          u: "ㅕ",
+          i: "ㅑ",
+          o: "ㅐ",
+          p: "ㅔ",
+          a: "ㅁ",
+          s: "ㄴ",
+          d: "ㅇ",
+          f: "ㄹ",
+          g: "ㅎ",
+          h: "ㅗ",
+          j: "ㅓ",
+          k: "ㅏ",
+          l: "ㅣ",
+          z: "ㅋ",
+          x: "ㅌ",
+          c: "ㅊ",
+          v: "ㅍ",
+          b: "ㅠ",
+          n: "ㅜ",
+          m: "ㅡ",
+        };
+
+        const keyboardMapQWERTZ = {
+          q: "ㅂ",
+          w: "ㅈ",
+          e: "ㄷ",
+          r: "ㄱ",
+          t: "ㅅ",
+          z: "ㅛ",
+          u: "ㅕ",
+          i: "ㅑ",
+          o: "ㅐ",
+          p: "ㅔ",
+          a: "ㅁ",
+          s: "ㄴ",
+          d: "ㅇ",
+          f: "ㄹ",
+          g: "ㅎ",
+          h: "ㅗ",
+          j: "ㅓ",
+          k: "ㅏ",
+          l: "ㅣ",
+          y: "ㅋ",
+          x: "ㅌ",
+          c: "ㅊ",
+          v: "ㅍ",
+          b: "ㅠ",
+          n: "ㅜ",
+          m: "ㅡ",
+        };
+
+        // Function to detect default keyboard layout
+        function detectDefaultKeyboardLayout() {
+          const language = navigator.language || navigator.userLanguage;
+          if (language) {
+            if (language.startsWith("de")) {
+              // German language detected
+              return "QWERTZ";
+            } else {
+              // Default to QWERTY
+              return "QWERTY";
+            }
+          }
+          return "QWERTY"; // Fallback
+        }
+
+        const keyboardLayoutSelector =
+          document.getElementById("keyboard-layout");
+        const defaultLayout = detectDefaultKeyboardLayout();
+        keyboardLayoutSelector.value = defaultLayout;
+
+        let currentKeyboardMap =
+          defaultLayout === "QWERTY" ? keyboardMapQWERTY : keyboardMapQWERTZ;
+
+        keyboardLayoutSelector.addEventListener("change", (e) => {
+          const selectedLayout = e.target.value;
+          if (selectedLayout === "QWERTY") {
+            currentKeyboardMap = keyboardMapQWERTY;
+          } else if (selectedLayout === "QWERTZ") {
+            currentKeyboardMap = keyboardMapQWERTZ;
+          }
+        });
+
+        const settingsButton = document.getElementById("settings-button");
+        const settingsMenu = document.getElementById("settings-menu");
+
+        settingsButton.addEventListener("click", () => {
+          settingsMenu.classList.toggle("visible");
+        });
+
+        // Define keyboard layout for virtual keyboard
+        const keyboardLayout = [
+          ["ㅂ", "ㅈ", "ㄷ", "ㄱ", "ㅅ", "ㅛ", "ㅕ", "ㅑ", "ㅐ", "ㅔ"],
+          ["ㅁ", "ㄴ", "ㅇ", "ㄹ", "ㅎ", "ㅗ", "ㅓ", "ㅏ", "ㅣ"],
+          ["ㅋ", "ㅌ", "ㅊ", "ㅍ", "ㅠ", "ㅜ", "ㅡ"],
+        ];
+
+        const virtualKeyboard = document.getElementById("virtual-keyboard");
+        const inputText = document.getElementById("input-text");
+        const modeIndicator = document.getElementById("mode-indicator");
+        let inputBuffer = []; // Stores all disassembled characters
+        let isHangeulMode = true; // Start in Hangeul mode
+
+        // Initialize placeholder and mode indicator
+        inputText.placeholder =
+          "Hangeul Mode: Type here or use the virtual keyboard below";
+        modeIndicator.textContent = "Current Mode: Hangeul";
+
+        function toggleInputMode() {
+          isHangeulMode = !isHangeulMode;
+          if (isHangeulMode) {
+            inputText.placeholder =
+              "Hangeul Mode: Type here or use the virtual keyboard below";
+            modeIndicator.textContent = "Current Mode: Hangeul";
+            virtualKeyboard.style.display = "block"; // Show the virtual keyboard
+          } else {
+            inputText.placeholder = "Romanization Mode: Type here";
+            modeIndicator.textContent = "Current Mode: Romanization";
+            virtualKeyboard.style.display = "none"; // Hide the virtual keyboard
+          }
+          inputText.focus();
+        }
+
+        document.addEventListener("keydown", (e) => {
+          // Check if Ctrl + Alt + H is pressed
+          if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "h") {
+            e.preventDefault();
+            toggleInputMode();
+          }
+        });
+
+        function renderVirtualKeyboard() {
+          virtualKeyboard.innerHTML = ""; // Clear existing keys
+          keyboardLayout.forEach((row) => {
+            const rowDiv = document.createElement("div");
+            rowDiv.className = "keyboard-row";
+            row.forEach((char) => {
+              const button = document.createElement("button");
+              button.textContent = char;
+              button.className = "key";
+              button.onclick = () => handleInput(char);
+              rowDiv.appendChild(button);
+            });
+            virtualKeyboard.appendChild(rowDiv);
+          });
+        }
+
+        renderVirtualKeyboard();
+
+        function handleInput(char) {
+          inputBuffer.push(char);
+          updateInputField();
+        }
+
+        function assembleBuffer(buffer) {
+          let result = "";
+          let tempBuffer = [];
+
+          buffer.forEach((char) => {
+            if (Hangul.isConsonant(char) || Hangul.isVowel(char)) {
+              tempBuffer.push(char);
+            } else {
+              if (tempBuffer.length > 0) {
+                result += Hangul.assemble(tempBuffer);
+                tempBuffer = [];
+              }
+              result += char;
+            }
+          });
+
+          if (tempBuffer.length > 0) {
+            result += Hangul.assemble(tempBuffer);
+          }
+
+          return result;
+        }
+
+        function updateInputField() {
+          const assembledText = assembleBuffer(inputBuffer);
+          inputText.value = assembledText;
+          inputText.selectionStart = inputText.value.length;
+          inputText.selectionEnd = inputText.value.length;
+          inputText.focus();
+        }
+
+        inputText.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace") {
+            e.preventDefault();
+            inputBuffer.pop();
+            updateInputField();
+          } else if (
+            !e.ctrlKey &&
+            !e.altKey &&
+            !e.metaKey &&
+            e.key.length === 1
+          ) {
+            if (isHangeulMode) {
+              const hangeulChar = currentKeyboardMap[e.key.toLowerCase()];
+              if (hangeulChar) {
+                e.preventDefault();
+                inputBuffer.push(hangeulChar);
+                updateInputField();
+              } else {
+                // Handle space, enter, and other characters
+                if (e.key === " " || e.key === "Spacebar") {
+                  e.preventDefault();
+                  inputBuffer.push(" ");
+                  updateInputField();
+                } else if (e.key === "Enter") {
+                  e.preventDefault();
+                  inputBuffer.push("\n");
+                  updateInputField();
+                } else {
+                  // Other characters
+                  e.preventDefault();
+                  inputBuffer.push(e.key);
+                  updateInputField();
+                }
+              }
+            } else {
+              // Romanization Mode: Allow normal typing
+              e.preventDefault();
+              inputBuffer.push(e.key);
+              updateInputField();
+            }
+          } else {
+            // Allow other keys to function normally
+          }
+        });
+
+        // Handle paste event
+        inputText.addEventListener("paste", (e) => {
+          e.preventDefault();
+          const pasteData = (e.clipboardData || window.clipboardData).getData(
+            "text"
+          );
+          const disassembledData = Hangul.disassemble(pasteData);
+          inputBuffer = inputBuffer.concat(disassembledData);
+          updateInputField();
+        });
+
+        // Prevent manual text input
+        inputText.addEventListener("input", (e) => {
+          e.preventDefault();
+          inputText.value = assembleBuffer(inputBuffer);
+        });
+      });
+    </script>
+  </body>
+</html>

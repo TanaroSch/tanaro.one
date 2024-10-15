@@ -31,6 +31,10 @@ var headerConfig = {
       link: "/extras/quiz/index.html",
       dropdown: [
         {
+          text: "한글 Keyboard",
+          link: "/extras/hangeul/hangeul.html",
+        },
+        {
           text: "AI Image Quiz",
           link: "/extras/quiz/index.html",
         },
