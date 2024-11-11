@@ -271,6 +271,33 @@
     <script src="https://cdn.jsdelivr.net/npm/hangul-js@0.2.6/hangul.js"></script>
 
     <script>
+      try {
+        document.addEventListener("DOMContentLoaded", function () {
+          var logger = new Logger(LogLevel.DEBUG);
+          logger.debug("DOM fully loaded");
+          try {
+            logger.debug("Creating Header instance");
+            var header = new Header(headerConfig);
+            logger.debug("Header instance created");
+            header.render("main-header");
+            logger.debug("Header rendered");
+          } catch (error) {
+            logger.error("Error in header initialization or rendering:", error);
+          }
+        });
+      } catch (error) {
+        logger.error("Caught error in script:", error);
+        logger.error("Error occurred on line:", error.lineNumber);
+      }
+
+      // Prevent errors from other scripts from breaking our functionality
+      window.addEventListener("error", function (event) {
+        logger.error("Caught global error:", event.error);
+        event.preventDefault();
+      });
+    </script>
+
+    <script>
       function showResult(message, type) {
         resultMessage.textContent = message;
         resultMessage.className = `text-${type}`;
