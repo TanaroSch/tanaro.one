@@ -35,6 +35,10 @@ var headerConfig = {
           link: "/extras/hangeul/hangeul.html",
         },
         {
+          text: "Korean Days Quiz",
+          link: "/extras/hangeul/weekdays.html",
+        },
+        {
           text: "AI Image Quiz",
           link: "/extras/quiz/index.html",
         },

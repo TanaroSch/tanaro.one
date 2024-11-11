@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Korean Weekdays</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../static/common-styles.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico" />
+    <script src="../../static/logger.js"></script>
+    <script src="../../static/headerConfig.js"></script>
+    <script src="../../static/svgPaths.js"></script>
+    <script src="../../static/header.js"></script>
+    <style>
+      #virtual-keyboard {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      #keyboard-settings {
+        position: relative;
+        display: inline-block;
+      }
+
+      #settings-button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      #settings-menu {
+        display: none;
+        position: absolute;
+        top: 30px;
+        left: 0;
+        background-color: var(--secondary-light);
+        padding: 10px;
+        border-radius: 5px;
+        z-index: 1;
+      }
+
+      #settings-menu.visible {
+        display: block;
+      }
+
+      #settings-menu label,
+      #settings-menu select {
+        color: var(--text-light);
+      }
+      .keyboard-row {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 5px;
+      }
+      .key {
+        padding: 10px;
+        text-align: center;
+        background-color: var(--primary-light);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 2px;
+        transition: background-color 0.3s;
+      }
+      .key:hover {
+        background-color: var(--secondary-light);
+      }
+      .dark-mode .key {
+        background-color: var(--primary-dark);
+      }
+      .dark-mode .key:hover {
+        background-color: var(--secondary-dark);
+      }
+      /* Enhanced Quiz Elements */
+      #english-day {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: var(--primary-light);
+        color: white;
+        border-radius: 8px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .dark-mode #english-day {
+        background: var(--primary-dark);
+      }
+
+      #quiz-stats {
+        display: flex;
+        justify-content: space-around;
+        font-size: 1.2rem;
+        padding: 1rem;
+        background: var(--secondary-light);
+        border-radius: 8px;
+        margin: 1rem 0;
+      }
+
+      .dark-mode #quiz-stats {
+        background: var(--secondary-dark);
+      }
+
+      #streak-count {
+        color: #3b82f6;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      #total-count {
+        color: #10b981;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      #result-message {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        border-radius: 6px;
+        font-weight: 500;
+        animation: fadeIn 0.3s ease-in;
+      }
+
+      #result-message.text-success {
+        background: #dcfce7;
+        color: #059669;
+      }
+
+      #result-message.text-danger {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+
+      #result-message.text-info {
+        background: #dbeafe;
+        color: #2563eb;
+      }
+
+      .dark-mode #result-message.text-success {
+        background: #065f46;
+        color: #6ee7b7;
+      }
+
+      .dark-mode #result-message.text-danger {
+        background: #7f1d1d;
+        color: #fca5a5;
+      }
+
+      .dark-mode #result-message.text-info {
+        background: #1e40af;
+        color: #93c5fd;
+      }
+
+      #answer-input {
+        font-size: 1.25rem;
+        padding: 0.75rem;
+        transition: all 0.3s ease;
+      }
+
+      #answer-input.bg-success {
+        background: #dcfce7 !important;
+        color: #059669 !important;
+      }
+
+      #answer-input.bg-danger {
+        background: #fee2e2 !important;
+        color: #dc2626 !important;
+      }
+
+      .dark-mode #answer-input.bg-success {
+        background: #065f46 !important;
+        color: #6ee7b7 !important;
+      }
+
+      .dark-mode #answer-input.bg-danger {
+        background: #7f1d1d !important;
+        color: #fca5a5 !important;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Make stats counters more prominent */
+      #quiz-stats div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      #quiz-stats div span {
+        display: inline-block;
+        min-width: 2.5rem;
+        text-align: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        background: var(--primary-light);
+        color: white;
+      }
+
+      .dark-mode #quiz-stats div span {
+        background: var(--primary-dark);
+      }
+    </style>
+  </head>
+  <body class="light-mode">
+    <header id="main-header">
+      <!-- Header content will be dynamically inserted here -->
+    </header>
+
+    <main class="container">
+      <h1>Korean Days Quiz</h1>
+
+      <div class="card">
+        <h2>Quiz Status</h2>
+        <div class="form-group" id="quiz-stats">
+          <div>
+            Current Streak:
+            <span id="streak-count" class="text-primary">0</span>
+          </div>
+          <div>
+            Total Correct: <span id="total-count" class="text-success">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Practice Days of the Week</h2>
+        <div class="form-group">
+          <div id="mode-indicator">Current Mode: Hangeul</div>
+          <div id="english-day" class="text-xl font-bold mb-4"></div>
+          <input
+            type="text"
+            id="answer-input"
+            placeholder="Type the Korean word..."
+          />
+          <div id="result-message"></div>
+        </div>
+        <button id="new-word-btn" class="btn btn-primary mt-4">
+          Get Random Day
+        </button>
+      </div>
+
+      <div class="card">
+        <h2>How to Use</h2>
+        <ul>
+          <li>Click "Get Random Day" to start</li>
+          <li>Type the Korean word for the shown day</li>
+          <li>Press Enter to check your answer</li>
+          <li>Leave the input empty and press Enter to see the answer</li>
+        </ul>
+      </div>
+    </main>
+
+    <!-- Include Hangul.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/hangul-js@0.2.6/hangul.js"></script>
+
+    <script>
+      function showResult(message, type) {
+        resultMessage.textContent = message;
+        resultMessage.className = `text-${type}`;
+        // Remove and re-add the message to trigger animation
+        resultMessage.style.display = "none";
+        setTimeout(() => {
+          resultMessage.style.display = "block";
+        }, 10);
+      }
+
+      // Then update the checkAnswer function to use this new function:
+      function checkAnswer() {
+        const userInput = Hangul.assemble(inputBuffer);
+
+        if (userInput === "") {
+          showResult(`Answer: ${currentDay.korean}`, "info");
+          currentStreak = 0;
+          streakCount.textContent = currentStreak;
+          return;
+        }
+
+        const correct = userInput === currentDay.korean;
+
+        if (correct) {
+          showResult("Correct! Next word coming...", "success");
+          answerInput.className = "bg-success";
+          currentStreak++;
+          totalCorrect++;
+          streakCount.textContent = currentStreak;
+          totalCount.textContent = totalCorrect;
+          setTimeout(getRandomDay, 1000);
+        } else {
+          showResult("Try again!", "danger");
+          answerInput.className = "bg-danger";
+          currentStreak = 0;
+          streakCount.textContent = currentStreak;
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const days = [
+          { english: "Monday", korean: "월요일" },
+          { english: "Tuesday", korean: "화요일" },
+          { english: "Wednesday", korean: "수요일" },
+          { english: "Thursday", korean: "목요일" },
+          { english: "Friday", korean: "금요일" },
+          { english: "Saturday", korean: "토요일" },
+          { english: "Sunday", korean: "일요일" },
+        ];
+
+        const keyboardMapQWERTZ = {
+          q: "ㅂ",
+          w: "ㅈ",
+          e: "ㄷ",
+          r: "ㄱ",
+          t: "ㅅ",
+          z: "ㅛ",
+          u: "ㅕ",
+          i: "ㅑ",
+          o: "ㅐ",
+          p: "ㅔ",
+          a: "ㅁ",
+          s: "ㄴ",
+          d: "ㅇ",
+          f: "ㄹ",
+          g: "ㅎ",
+          h: "ㅗ",
+          j: "ㅓ",
+          k: "ㅏ",
+          l: "ㅣ",
+          y: "ㅋ",
+          x: "ㅌ",
+          c: "ㅊ",
+          v: "ㅍ",
+          b: "ㅠ",
+          n: "ㅜ",
+          m: "ㅡ",
+        };
+
+        let currentDay = days[0];
+        let inputBuffer = [];
+        let currentStreak = 0;
+        let totalCorrect = 0;
+        let isHangeulMode = true;
+
+        const answerInput = document.getElementById("answer-input");
+        const englishDay = document.getElementById("english-day");
+        const resultMessage = document.getElementById("result-message");
+        const streakCount = document.getElementById("streak-count");
+        const totalCount = document.getElementById("total-count");
+        const newWordBtn = document.getElementById("new-word-btn");
+
+        function getRandomDay() {
+          const randomIndex = Math.floor(Math.random() * days.length);
+          currentDay = days[randomIndex];
+          englishDay.textContent = currentDay.english;
+          inputBuffer = [];
+          answerInput.value = "";
+          resultMessage.textContent = "";
+          resultMessage.className = "";
+          answerInput.className = "";
+        }
+
+        function updateDisplay() {
+          answerInput.value = Hangul.assemble(inputBuffer);
+        }
+
+        function checkAnswer() {
+          const userInput = Hangul.assemble(inputBuffer);
+
+          if (userInput === "") {
+            resultMessage.textContent = `Answer: ${currentDay.korean}`;
+            resultMessage.className = "text-info";
+            currentStreak = 0;
+            streakCount.textContent = currentStreak;
+            return;
+          }
+
+          const correct = userInput === currentDay.korean;
+
+          if (correct) {
+            resultMessage.textContent = "Correct! Next word coming...";
+            resultMessage.className = "text-success";
+            answerInput.className = "bg-success text-light";
+            currentStreak++;
+            totalCorrect++;
+            streakCount.textContent = currentStreak;
+            totalCount.textContent = totalCorrect;
+            setTimeout(getRandomDay, 1000);
+          } else {
+            resultMessage.textContent = "Try again!";
+            resultMessage.className = "text-danger";
+            answerInput.className = "bg-danger text-light";
+            currentStreak = 0;
+            streakCount.textContent = currentStreak;
+          }
+        }
+
+        answerInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            checkAnswer();
+          } else if (e.key === "Backspace") {
+            e.preventDefault();
+            inputBuffer.pop();
+            updateDisplay();
+          } else if (
+            !e.ctrlKey &&
+            !e.altKey &&
+            !e.metaKey &&
+            e.key.length === 1
+          ) {
+            e.preventDefault();
+            const hangeulChar = keyboardMapQWERTZ[e.key.toLowerCase()];
+            if (hangeulChar) {
+              inputBuffer.push(hangeulChar);
+              updateDisplay();
+            } else if (e.key === " ") {
+              inputBuffer.push(" ");
+              updateDisplay();
+            }
+          }
+        });
+
+        newWordBtn.addEventListener("click", getRandomDay);
+
+        // Initialize with first word
+        getRandomDay();
+      });
+    </script>
+  </body>
+</html>
