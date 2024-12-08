@@ -35,3 +35,5 @@ def generate_image_list(base_path='images'):
 
 if __name__ == "__main__":
     generate_image_list()
+    # print the list to the console:
+    
